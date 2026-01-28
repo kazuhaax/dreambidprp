@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import pool from './config/database.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -45,6 +47,40 @@ app.use((err, req, res, next) => {
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Initialize database on startup
+async function initializeDatabase() {
+  try {
+    console.log('🔄 Checking/initializing database...');
+    
+    // Check if users table exists
+    const tableCheck = await pool.query(
+      "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')"
+    );
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log('📝 Creating database tables...');
+      
+      // Read and execute schema
+      const schemaSql = fs.readFileSync(path.join(__dirname, 'setup-database.sql'), 'utf-8');
+      await pool.query(schemaSql);
+      console.log('✅ Schema created');
+      
+      // Read and execute seed data
+      const seedSql = fs.readFileSync(path.join(__dirname, 'seed-properties.sql'), 'utf-8');
+      await pool.query(seedSql);
+      console.log('✅ Seed data inserted');
+    } else {
+      console.log('✅ Database tables already exist');
+    }
+  } catch (error) {
+    console.error('❌ Database initialization error:', error.message);
+    // Don't exit - let the app continue anyway
+  }
+}
+
+// Initialize database before starting server
+await initializeDatabase();
 
 // API Routes
 app.use('/api/auth', authRoutes);

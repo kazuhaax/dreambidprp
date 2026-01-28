@@ -96,8 +96,8 @@ CREATE INDEX idx_property_interests_user_id ON property_interests(user_id);
 CREATE INDEX idx_property_interests_type ON property_interests(interest_type);
 CREATE INDEX idx_users_email ON users(email);
 
--- Insert a sample admin user (password: admin123 - hashed with bcrypt)
--- Note: In production, create users through the API
+-- Insert a sample admin user (password: admin123 - plain text for development)
+-- Note: In production, create users through the API with bcrypt hashing
 INSERT INTO users (email, password_hash, full_name, role, is_active)
-VALUES ('admin@dreambid.com', '$2a$10$8Tz9VZn8g5.xRqf7UXc0.uqtJPZXEJCvKFUVTdM0dAVGdR5i8CTIO', 'Admin User', 'admin', true)
+VALUES ('admin@dreambid.com', 'admin123', 'Admin User', 'admin', true)
 ON CONFLICT (email) DO NOTHING;

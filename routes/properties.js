@@ -11,17 +11,22 @@ const updateAuctionStatus = async () => {
   const now = new Date();
   // Only mark as expired if auction date has passed
   // Keep 'upcoming' status until auction date arrives
-  await pool.query(
-    `UPDATE properties 
-     SET auction_status = CASE 
-       WHEN auction_status = 'upcoming' AND auction_date <= $1 THEN 'active'
-       WHEN auction_status = 'active' AND auction_date < $1 THEN 'expired'
-       ELSE auction_status
-     END
-     WHERE (auction_status = 'upcoming' AND auction_date <= $1)
-        OR (auction_status = 'active' AND auction_date < $1)`,
-    [now]
-  );
+  try {
+    await pool.query(
+      `UPDATE properties 
+       SET auction_status = CASE 
+         WHEN auction_status = 'upcoming' AND auction_date <= $1 THEN 'active'
+         WHEN auction_status = 'active' AND auction_date < $1 THEN 'expired'
+         ELSE auction_status
+       END
+       WHERE (auction_status = 'upcoming' AND auction_date <= $1)
+          OR (auction_status = 'active' AND auction_date < $1)`,
+      [now]
+    );
+  } catch (err) {
+    // Log and continue - don't crash the server if DB is unavailable during dev
+    console.warn('updateAuctionStatus: database unavailable or query failed', err && err.message ? err.message : err);
+  }
 };
 
 // Run status update on server start and periodically

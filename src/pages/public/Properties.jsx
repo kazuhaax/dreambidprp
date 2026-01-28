@@ -102,25 +102,25 @@ function Properties() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-10">
-        <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Properties</h1>
-        <p className="text-xl text-gray-600">Browse our complete collection of premium auction properties</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mb-8 sm:mb-10">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-4">Properties</h1>
+        <p className="text-base sm:text-lg md:text-xl text-gray-600">Browse our complete collection of premium auction properties</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-10 border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 mb-8 sm:mb-10 border border-gray-100">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-red-700 rounded-full"></div>
-          <h2 className="text-2xl font-bold text-gray-900">Filters</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Filters</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Status</label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
             >
               <option value="">All Status</option>
               <option value="upcoming">Upcoming</option>
@@ -129,21 +129,21 @@ function Properties() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">City</label>
             <input
               type="text"
               value={filters.city}
               onChange={(e) => handleFilterChange('city', e.target.value)}
               placeholder="Search city..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Property Type</label>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Property Type</label>
             <select
               value={filters.property_type}
               onChange={(e) => handleFilterChange('property_type', e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
             >
               <option value="">All Types</option>
               <option value="house">House</option>
@@ -154,29 +154,29 @@ function Properties() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Min Price (₹)</label>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Min Price (₹)</label>
             <input
               type="number"
               value={filters.min_price}
               onChange={(e) => handleFilterChange('min_price', e.target.value)}
               placeholder="Min"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Max Price (₹)</label>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Max Price (₹)</label>
             <input
               type="number"
               value={filters.max_price}
               onChange={(e) => handleFilterChange('max_price', e.target.value)}
               placeholder="Max"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
             />
           </div>
         </div>
         <button
           onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-          className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold"
+          className="mt-6 inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold text-sm sm:text-base"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -188,17 +188,17 @@ function Properties() {
       {/* Properties Grid */}
       {properties.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg shadow">
-          <p className="text-gray-500 text-lg">No properties found matching your criteria.</p>
+          <p className="text-gray-500 text-base sm:text-lg">No properties found matching your criteria.</p>
           <button
             onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-            className="mt-4 text-red-600 hover:text-red-700"
+            className="mt-4 text-red-600 hover:text-red-700 text-sm sm:text-base"
           >
             Clear filters to see all properties
           </button>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8">
             {properties.map((property) => {
               // Get image URL - prefer cover_image_url, then first image from images array
               const imageUrl = property.cover_image_url || 
@@ -212,7 +212,7 @@ function Properties() {
                 className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
               >
                 <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     {imageUrl ? (
                       <img
                         src={getImageUrl(imageUrl)}
@@ -228,8 +228,8 @@ function Properties() {
                         <span className="text-gray-400">No Image</span>
                       </div>
                     )}
-                    <div className="absolute top-4 right-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+                      <span className={`px-3 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                         property.auction_status === 'active' ? 'bg-green-500 text-white' :
                         property.auction_status === 'upcoming' ? 'bg-yellow-500 text-white' :
                         'bg-gray-500 text-white'
@@ -239,13 +239,13 @@ function Properties() {
                     </div>
                   </div>
                 </Link>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-red-600 transition-colors group-hover:text-red-600">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 hover:text-red-600 transition-colors group-hover:text-red-600 line-clamp-2">
                         {property.title}
                       </h3>
                     </Link>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">
                     <svg className="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -253,18 +253,18 @@ function Properties() {
                     {property.city}, {property.state}
                   </p>
                   {property.property_type && (
-                    <p className="text-sm text-gray-500 mb-4">Type: {property.property_type}</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mb-4">Type: {property.property_type}</p>
                   )}
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2 mb-4">
                     <div>
-                      <p className="text-sm text-gray-500">Reserve Price</p>
-                      <p className="text-2xl font-bold text-red-600">
+                      <p className="text-xs sm:text-sm text-gray-500">Reserve Price</p>
+                      <p className="text-lg sm:text-2xl font-bold text-red-600">
                         ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">Auction Date</p>
-                      <p className="text-sm font-semibold text-gray-900">
+                    <div className="text-left sm:text-right">
+                      <p className="text-xs sm:text-sm text-gray-500">Auction Date</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-900">
                         {new Date(property.auction_date).toLocaleDateString()}
                       </p>
                     </div>
@@ -273,7 +273,7 @@ function Properties() {
                     <Link
                       to={`/properties/${property.id}`}
                       onClick={() => handleView(property.id)}
-                      className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-3 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-2 sm:py-3 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
                     >
                       View Details
                     </Link>
@@ -282,10 +282,10 @@ function Properties() {
                         shareProperty(property);
                         interestsAPI.track({ property_id: property.id, interest_type: 'share' });
                       }}
-                      className="px-5 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="px-3 sm:px-5 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       title="Share on WhatsApp"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .96 4.534.96 10.08c0 1.752.413 3.4 1.141 4.865L.06 23.884l9.251-2.39a11.717 11.717 0 005.739 1.49h.005c6.554 0 11.09-5.533 11.09-11.088a11.106 11.106 0 00-3.291-7.918"/>
                       </svg>
                     </button>
@@ -298,21 +298,21 @@ function Properties() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex justify-center items-center gap-2">
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-sm sm:text-base"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-gray-700">
+              <span className="px-2 sm:px-4 py-2 text-gray-700 text-xs sm:text-base">
                 Page {pagination.page} of {pagination.pages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                 disabled={page === pagination.pages}
-                className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-sm sm:text-base"
               >
                 Next
               </button>

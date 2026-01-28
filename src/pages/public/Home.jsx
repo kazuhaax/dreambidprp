@@ -76,7 +76,7 @@ function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white py-24 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white py-12 sm:py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div 
           className="absolute inset-0 opacity-20"
@@ -85,29 +85,29 @@ function Home() {
           }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold">
+          <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm font-semibold">
             🏆 Premium Property Auctions
           </div>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold mb-4 sm:mb-6 leading-tight">
             Discover Premium Properties
             <span className="block text-red-200">at Auction</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-10 text-red-50 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-10 text-red-50 max-w-2xl mx-auto leading-relaxed">
             Find your dream property through our transparent and secure auction platform
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
             <Link
               to="/properties"
-              className="group inline-flex items-center gap-2 bg-white text-red-600 px-8 py-4 rounded-xl font-bold hover:bg-red-50 transition-all duration-300 shadow-2xl hover:shadow-red-500/50 hover:scale-105 transform"
+              className="group inline-flex items-center justify-center gap-2 bg-white text-red-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:bg-red-50 transition-all duration-300 shadow-2xl hover:shadow-red-500/50 hover:scale-105 transform"
             >
               Browse Properties
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all duration-300 border-2 border-white/30"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:bg-white/20 transition-all duration-300 border-2 border-white/30"
             >
               Register Your Requirements
             </Link>
@@ -117,18 +117,18 @@ function Home() {
 
       {/* Filters */}
       <div className="bg-white shadow-lg border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-red-700 rounded-full"></div>
-            <h2 className="text-2xl font-bold text-gray-900">Quick Filters</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Quick Filters</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Status</label>
               <select
                 value={filters.status}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
               >
                 <option value="">All Status</option>
                 <option value="upcoming">Upcoming</option>
@@ -137,21 +137,21 @@ function Home() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">City</label>
               <input
                 type="text"
                 value={filters.city}
                 onChange={(e) => handleFilterChange('city', e.target.value)}
                 placeholder="Search city..."
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Property Type</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Property Type</label>
               <select
                 value={filters.property_type}
                 onChange={(e) => handleFilterChange('property_type', e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
               >
                 <option value="">All Types</option>
                 <option value="house">House</option>
@@ -162,30 +162,30 @@ function Home() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Min Price (₹)</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Min Price (₹)</label>
               <input
                 type="number"
                 value={filters.min_price}
                 onChange={(e) => handleFilterChange('min_price', e.target.value)}
                 placeholder="Min"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Max Price (₹)</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Max Price (₹)</label>
               <input
                 type="number"
                 value={filters.max_price}
                 onChange={(e) => handleFilterChange('max_price', e.target.value)}
                 placeholder="Max"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white hover:border-gray-300 text-sm"
               />
             </div>
           </div>
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-6">
             <button
               onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold text-sm sm:text-base"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -195,7 +195,7 @@ function Home() {
             <Link
               to="/properties"
               state={{ filters: filters }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-2.5 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-2.5 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl text-sm sm:text-base"
             >
               View All Results
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,15 +207,15 @@ function Home() {
       </div>
 
       {/* Featured Properties */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <div className="inline-block mb-4 px-4 py-2 bg-red-100 text-red-600 rounded-full text-sm font-semibold">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+        <div className="text-center mb-12 sm:mb-16">
+          <div className="inline-block mb-4 px-4 py-2 bg-red-100 text-red-600 rounded-full text-xs sm:text-sm font-semibold">
             Featured Listings
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
             Featured Properties
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Explore our handpicked selection of premium properties available for auction
           </p>
         </div>
@@ -226,7 +226,7 @@ function Home() {
             <p className="text-gray-400 text-sm mt-2">Check back soon for new listings!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {properties.map((property) => {
               // Get image URL - prefer cover_image_url, then first image from images array
               const imageUrl = property.cover_image_url || 
@@ -236,7 +236,7 @@ function Home() {
 
               return (
               <div key={property.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-                <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
+                <div className="relative h-40 sm:h-56 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
                   {imageUrl ? (
                     <img
                       src={getImageUrl(imageUrl)}
@@ -252,8 +252,8 @@ function Home() {
                       <span className="text-gray-400">No Image</span>
                     </div>
                   )}
-                  <div className="absolute top-4 right-4">
-                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${
+                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+                    <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${
                       property.auction_status === 'active' ? 'bg-green-500/90 text-white' :
                       property.auction_status === 'upcoming' ? 'bg-yellow-500/90 text-white' :
                       'bg-gray-500/90 text-white'
@@ -263,42 +263,42 @@ function Home() {
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="p-6 bg-white">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">{property.title}</h3>
-                  <p className="text-gray-600 mb-4">
+                <div className="p-4 sm:p-6 bg-white">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-red-600 transition-colors line-clamp-2">{property.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">
                     <svg className="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     {property.city}, {property.state}
                   </p>
-                  <div className="flex justify-between items-center mb-5 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-100">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2 mb-5 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-100">
                     <div>
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Reserve Price</p>
-                      <p className="text-2xl font-extrabold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                      <p className="text-lg sm:text-2xl font-extrabold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
                         ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Auction Date</p>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-xs sm:text-sm font-bold text-gray-900">
                         {new Date(property.auction_date).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
                     <Link
                       to={`/properties/${property.id}`}
-                      className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-3 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-2 sm:py-3 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
                     >
                       View Details
                     </Link>
                     <button
                       onClick={() => shareProperty(property)}
-                      className="px-5 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="px-3 sm:px-5 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       title="Share on WhatsApp"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .96 4.534.96 10.08c0 1.752.413 3.4 1.141 4.865L.06 23.884l9.251-2.39a11.717 11.717 0 005.739 1.49h.005c6.554 0 11.09-5.533 11.09-11.088a11.106 11.106 0 00-3.291-7.918"/>
                       </svg>
                     </button>
@@ -311,13 +311,13 @@ function Home() {
         )}
 
         {properties.length > 0 && (
-          <div className="text-center mt-16">
+          <div className="text-center mt-12 sm:mt-16">
             <Link
               to="/properties"
-              className="group inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-10 py-4 rounded-xl font-bold hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+              className="group inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-xl font-bold hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 text-sm sm:text-base"
             >
               View All Properties
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -326,7 +326,7 @@ function Home() {
       </div>
 
       {/* Features Section */}
-      <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-50 py-20 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 sm:py-20 overflow-hidden">
         <div 
           className="absolute inset-0"
           style={{
@@ -334,38 +334,38 @@ function Home() {
           }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Why Choose DreamBid?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of property auctions</p>
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Why Choose DreamBid?</h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of property auctions</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-              <div className="bg-gradient-to-br from-red-500 to-red-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="group text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Transparent Process</h3>
-              <p className="text-gray-600 leading-relaxed">Clear auction dates and reserve prices for all properties with full transparency</p>
+              <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3">Transparent Process</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">Clear auction dates and reserve prices for all properties with full transparency</p>
             </div>
-            <div className="group text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-              <div className="bg-gradient-to-br from-green-500 to-green-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+              <div className="bg-gradient-to-br from-green-500 to-green-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Easy Contact</h3>
-              <p className="text-gray-600 leading-relaxed">Get in touch instantly via WhatsApp or enquiry form with quick response times</p>
+              <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3">Easy Contact</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">Get in touch instantly via WhatsApp or enquiry form with quick response times</p>
             </div>
-            <div className="group text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Location Details</h3>
-              <p className="text-gray-600 leading-relaxed">View approximate property locations on interactive maps with detailed information</p>
+              <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3">Location Details</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">View approximate property locations on interactive maps with detailed information</p>
             </div>
           </div>
         </div>

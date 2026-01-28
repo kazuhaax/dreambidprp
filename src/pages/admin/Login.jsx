@@ -10,13 +10,14 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { login } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
+      const response = await login({ email, password });
+      const { token, user } = response;
 
       // Check if user is admin or staff
       if (user.role !== 'admin' && user.role !== 'staff') {
@@ -25,15 +26,7 @@ function Login() {
         return;
       }
 
-      // Store token and user in localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      // Update API headers
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
       toast.success('Login successful!');
-      
       // Navigate to dashboard
       navigate('/admin/dashboard', { replace: true });
     } catch (error) {

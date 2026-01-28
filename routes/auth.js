@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import pool from '../config/database.js';
@@ -30,7 +29,7 @@ router.post('/register', [
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create user (store password as plain text for development)
+    // Store password as plain text for simplicity (development only)
     const result = await pool.query(
       'INSERT INTO users (email, password_hash, full_name, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, full_name, role',
       [email, password, full_name, phone || null, role]
@@ -92,7 +91,7 @@ router.post('/login', [
       return res.status(401).json({ message: 'Account is inactive' });
     }
 
-    // Check password (simple comparison for development)
+    // Simple plain-text comparison
     if (password !== user.password_hash) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

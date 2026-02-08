@@ -246,33 +246,35 @@ function Properties() {
                           </div>
                         </div>
                       </Link>
-                      <div className="p-4 md:p-6">
-                        <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
-                          <h3 className="text-lg md:text-2xl font-bold text-white mb-2 group-hover:text-gold transition-colors line-clamp-2">
-                            {property.title}
-                          </h3>
-                        </Link>
-                        <p className="text-text-secondary text-xs md:text-sm mb-4">
-                          📍 {property.city}, {property.state}
-                          {property.property_size && ` • ${property.property_size} sq.ft`}
-                        </p>
-                        {property.property_type && (
-                          <p className="text-text-secondary text-xs md:text-sm mb-4">Type: {property.property_type}</p>
-                        )}
-                        <div className="mb-4 md:mb-6 space-y-2 md:space-y-3">
-                          <div>
-                            <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
-                            <p className="text-lg md:text-2xl font-bold text-gold">
-                              ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
-                            </p>
-                          </div>
-                          {property.auction_status === 'active' && (
-                            <div>
-                              <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
-                            </div>
+                      <div className="p-4 md:p-6 flex flex-col h-full">
+                        <div className="flex-grow">
+                          <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
+                            <h3 className="text-lg md:text-2xl font-bold text-white mb-2 group-hover:text-gold transition-colors line-clamp-2 min-h-14 md:min-h-16">
+                              {property.title}
+                            </h3>
+                          </Link>
+                          <p className="text-text-secondary text-xs md:text-sm mb-3">
+                            📍 {property.city}, {property.state}
+                            {property.property_size && ` • ${property.property_size} sq.ft`}
+                          </p>
+                          {property.property_type && (
+                            <p className="text-text-secondary text-xs md:text-sm mb-3">Type: {property.property_type}</p>
                           )}
+                          <div className="space-y-1 md:space-y-2">
+                            <div>
+                              <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
+                              <p className="text-lg md:text-2xl font-bold text-gold">
+                                ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
+                              </p>
+                            </div>
+                            {property.auction_status === 'active' && (
+                              <div>
+                                <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex gap-2 md:gap-3">
+                        <div className="flex gap-2 md:gap-3 mt-4 md:mt-6">
                           <Link
                             to={`/properties/${property.id}`}
                             onClick={() => handleView(property.id)}

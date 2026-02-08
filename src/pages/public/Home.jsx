@@ -254,23 +254,25 @@ function Home() {
                       </span>
                     </div>
                   </div>
-                  <div className="p-4 md:p-6">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{property.title}</h3>
-                    <p className="text-text-secondary text-xs md:text-sm mb-4 md:mb-6">
-                      📍 {property.city}, {property.state} • {property.property_size} sq.ft
-                    </p>
-                    <div className="mb-4 md:mb-6 space-y-2 md:space-y-3">
-                      <div>
-                        <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
-                        <p className="text-lg md:text-2xl font-bold text-gold">₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}</p>
-                      </div>
-                      {property.auction_status === 'active' && (
+                  <div className="p-4 md:p-6 flex flex-col h-full">
+                    <div className="flex-grow">
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 min-h-14 md:min-h-16 line-clamp-2">{property.title}</h3>
+                      <p className="text-text-secondary text-xs md:text-sm mb-3">
+                        📍 {property.city}, {property.state} • {property.property_size} sq.ft
+                      </p>
+                      <div className="space-y-1 md:space-y-2">
                         <div>
-                          <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
+                          <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
+                          <p className="text-lg md:text-2xl font-bold text-gold">₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}</p>
                         </div>
-                      )}
+                        {property.auction_status === 'active' && (
+                          <div>
+                            <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex gap-2 md:gap-3">
+                    <div className="flex gap-2 md:gap-3 mt-4 md:mt-6">
                       <Link
                         to={`/properties/${property.id}`}
                         className="flex-1 btn-primary text-center text-xs md:text-sm py-3 md:py-4"

@@ -246,7 +246,7 @@ function Properties() {
                           </div>
                         </div>
                       </Link>
-                      <div className="p-4 md:p-6 flex flex-col h-full">
+                      <div className="p-4 md:p-6 flex flex-col">
                         <div className="flex-grow">
                           <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
                             <h3 className="text-lg md:text-2xl font-bold text-white mb-2 group-hover:text-gold transition-colors line-clamp-2 min-h-14 md:min-h-16">
@@ -274,7 +274,7 @@ function Properties() {
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-2 md:gap-3 mt-4 md:mt-6">
+                        <div className="flex gap-2 md:gap-3 mt-4 md:mt-6 pt-4 md:pt-6 border-t border-midnight-700">
                           <Link
                             to={`/properties/${property.id}`}
                             onClick={() => handleView(property.id)}

@@ -32,12 +32,12 @@ async function runMigrations() {
     console.log('Starting database migration...');
     
     // Run schema setup
-    const schemaSql = fs.readFileSync(path.join(__dirname, 'setup-database.sql'), 'utf-8');
+    const schemaSql = fs.readFileSync(path.join(__dirname, '..', 'setup-database.sql'), 'utf-8');
     await pool.query(schemaSql);
     console.log('✅ Schema setup completed');
 
     // Run seed data
-    const seedSql = fs.readFileSync(path.join(__dirname, 'seed-properties.sql'), 'utf-8');
+    const seedSql = fs.readFileSync(path.join(__dirname, '..', 'seed-properties.sql'), 'utf-8');
     await pool.query(seedSql);
     console.log('✅ Seed data completed');
 

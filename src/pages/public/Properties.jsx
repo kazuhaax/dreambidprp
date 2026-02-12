@@ -26,47 +26,31 @@ function useDebounce(value, delay) {
 function Properties() {
   const { toggleShortlist, isShortlisted } = useShortlist();
   const [filters, setFilters] = useState({
-    status: '',
     city: '',
     property_type: '',
-    min_price: '',
-    max_price: '',
+    budget: '',
   });
+  const [sortBy, setSortBy] = useState('application_date');
   const [page, setPage] = useState(1);
   const limit = 12;
 
-  // Debounce text inputs (city) to avoid API calls on every keystroke
+  // Debounce text inputs
   const debouncedCity = useDebounce(filters.city, 500);
-  const debouncedMinPrice = useDebounce(filters.min_price, 500);
-  const debouncedMaxPrice = useDebounce(filters.max_price, 500);
 
   // Create query filters object with debounced values
   const queryFilters = useMemo(() => ({
-    status: filters.status,
     city: debouncedCity,
     property_type: filters.property_type,
-    min_price: debouncedMinPrice,
-    max_price: debouncedMaxPrice,
-  }), [filters.status, debouncedCity, filters.property_type, debouncedMinPrice, debouncedMaxPrice]);
+    min_price: filters.budget ? parseInt(filters.budget) : '',
+  }), [debouncedCity, filters.property_type, filters.budget]);
 
   const { data, isLoading, error } = useQuery(
-    ['properties', queryFilters, page],
+    ['properties', queryFilters, page, sortBy],
     () => {
-      // Remove empty string values for numeric fields to avoid validation errors
-      const params = { page, limit };
-      // Status can be empty string (means all), so include it if it exists
-      if (queryFilters.status !== undefined && queryFilters.status !== null) {
-        params.status = queryFilters.status;
-      }
+      const params = { page, limit, sort_by: sortBy };
       if (queryFilters.city) params.city = queryFilters.city;
       if (queryFilters.property_type) params.property_type = queryFilters.property_type;
-      // Only include numeric fields if they have actual values
-      if (queryFilters.min_price && queryFilters.min_price !== '') {
-        params.min_price = parseFloat(queryFilters.min_price);
-      }
-      if (queryFilters.max_price && queryFilters.max_price !== '') {
-        params.max_price = parseFloat(queryFilters.max_price);
-      }
+      if (queryFilters.min_price) params.min_price = queryFilters.min_price;
       return propertiesAPI.getAll(params);
     }
   );
@@ -76,28 +60,18 @@ function Properties() {
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
-    setPage(1); // Reset to first page on filter change
+    setPage(1);
   };
 
   const handleView = (propertyId) => {
     interestsAPI.track({ property_id: propertyId, interest_type: 'view' });
   };
 
-  if (isLoading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading properties...</div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">Error loading properties: {error.message}</p>
+        <div className="bg-red-950 border border-red-700 rounded-lg p-4">
+          <p className="text-red-200">Error loading properties: {error.message}</p>
         </div>
       </div>
     );
@@ -105,92 +79,117 @@ function Properties() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-midnight-900 to-midnight-950">
-      <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-16">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-2 md:mb-4">Properties</h1>
-        <p className="text-base md:text-lg lg:text-xl text-text-secondary mb-8 md:mb-12">Browse our complete collection of premium auction properties</p>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+        {/* Search Bar */}
+        <div className="card p-6 md:p-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Location/Borrower Search */}
+            <div>
+              <label className="label block mb-2">
+                Search by Location, Borrower Name
+              </label>
+              <div className="relative">
+                <svg className="absolute left-3 top-3 w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={filters.city}
+                  onChange={(e) => handleFilterChange('city', e.target.value)}
+                  placeholder="Search location"
+                  className="w-full pl-10 pr-4 py-3 bg-midnight-800 border border-midnight-700 text-text-primary placeholder-text-muted rounded-input focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition"
+                />
+              </div>
+            </div>
 
-        {/* Filters */}
-        <div className="card p-4 md:p-8 mb-8 md:mb-12">
-          <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Filters</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+            {/* Property Type */}
             <div>
-              <label className="label block mb-3">Status</label>
-              <select
-                value={filters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="input-field text-sm"
-              >
-                <option value="">All Status</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-              </select>
-            </div>
-            <div>
-              <label className="label block mb-3">City</label>
-              <input
-                type="text"
-                value={filters.city}
-                onChange={(e) => handleFilterChange('city', e.target.value)}
-                placeholder="Search city..."
-                className="input-field text-sm"
-              />
-            </div>
-            <div>
-              <label className="label block mb-3">Property Type</label>
+              <label className="label block mb-2">
+                Property Type
+              </label>
               <select
                 value={filters.property_type}
                 onChange={(e) => handleFilterChange('property_type', e.target.value)}
-                className="input-field text-sm"
+                className="w-full px-4 py-3 bg-midnight-800 border border-midnight-700 text-text-primary rounded-input focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition"
               >
-                <option value="">All Types</option>
-                <option value="house">House</option>
-                <option value="apartment">Apartment</option>
-                <option value="land">Land</option>
-                <option value="commercial">Commercial</option>
-                <option value="villa">Villa</option>
+                <option value="" className="bg-midnight-800 text-text-primary">Select</option>
+                <option value="house" className="bg-midnight-800 text-text-primary">House</option>
+                <option value="apartment" className="bg-midnight-800 text-text-primary">Apartment</option>
+                <option value="land" className="bg-midnight-800 text-text-primary">Land</option>
+                <option value="commercial" className="bg-midnight-800 text-text-primary">Commercial</option>
+                <option value="villa" className="bg-midnight-800 text-text-primary">Villa</option>
               </select>
             </div>
+
+            {/* Budget */}
             <div>
-              <label className="label block mb-3">Min Price (₹)</label>
-              <input
-                type="number"
-                value={filters.min_price}
-                onChange={(e) => handleFilterChange('min_price', e.target.value)}
-                placeholder="Min"
-                className="input-field text-sm"
-              />
+              <label className="label block mb-2">
+                Budget
+              </label>
+              <select
+                value={filters.budget}
+                onChange={(e) => handleFilterChange('budget', e.target.value)}
+                className="w-full px-4 py-3 bg-midnight-800 border border-midnight-700 text-text-primary rounded-input focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition"
+              >
+                <option value="" className="bg-midnight-800 text-text-primary">Select</option>
+                <option value="0" className="bg-midnight-800 text-text-primary">Under 20 Lakhs</option>
+                <option value="2000000" className="bg-midnight-800 text-text-primary">20-40 Lakhs</option>
+                <option value="4000000" className="bg-midnight-800 text-text-primary">40-60 Lakhs</option>
+                <option value="6000000" className="bg-midnight-800 text-text-primary">60 Lakhs - 1 Crore</option>
+                <option value="10000000" className="bg-midnight-800 text-text-primary">1-2 Crores</option>
+                <option value="20000000" className="bg-midnight-800 text-text-primary">2-5 Crores</option>
+                <option value="50000000" className="bg-midnight-800 text-text-primary">Above 5 Crores</option>
+              </select>
             </div>
-            <div>
-              <label className="label block mb-3">Max Price (₹)</label>
-              <input
-                type="number"
-                value={filters.max_price}
-                onChange={(e) => handleFilterChange('max_price', e.target.value)}
-                placeholder="Max"
-                className="input-field text-sm"
-              />
+
+            {/* Search Button */}
+            <div className="flex items-end">
+              <button className="w-full px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition font-semibold text-sm">
+                Search
+              </button>
             </div>
           </div>
-          <button
-            onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-            className="px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover focus:bg-gold focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-midnight-900 active:bg-gold transition-all text-sm font-semibold shadow-md hover:shadow-lg"
-          >
-            Clear Filters
-          </button>
+
+          {/* Results info and controls */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <p className="text-sm text-text-secondary">
+              ({pagination.total || 0} Properties Found)
+            </p>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <button className="px-3 py-1 border border-midnight-700 rounded-btn text-sm text-text-nav hover:bg-midnight-800 transition">
+                  All
+                </button>
+                <button className="px-3 py-1 bg-gold text-midnight-950 rounded-btn text-sm hover:bg-gold-hover transition">
+                  Curated
+                </button>
+              </div>
+              <button
+                onClick={() => setFilters({ city: '', property_type: '', budget: '' })}
+                className="text-sm text-gold hover:text-gold-hover font-medium transition"
+              >
+                Clear Filters
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-text-nav font-medium">Sort By</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 bg-midnight-800 border border-midnight-700 rounded-input text-sm focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition text-text-primary"
+                >
+                  <option value="application_date" className="bg-midnight-800 text-text-primary">Auctions Closing Soon</option>
+                  <option value="reserve_price" className="bg-midnight-800 text-text-primary">Price: Low to High</option>
+                  <option value="reserve_price_desc" className="bg-midnight-800 text-text-primary">Price: High to Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Loading State */}
         {isLoading && (
           <div className="text-center py-12">
             <p className="text-text-secondary text-lg">Loading properties...</p>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-950 border border-red-700 rounded-lg p-4 mb-8">
-            <p className="text-red-200">Error loading properties: {error.message}</p>
           </div>
         )}
 
@@ -201,28 +200,29 @@ function Properties() {
               <div className="text-center py-12 card">
                 <p className="text-text-secondary text-lg">No properties found matching your criteria.</p>
                 <button
-                  onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-                  className="mt-4 px-4 py-2 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover focus:bg-gold focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-midnight-900 active:bg-gold transition-all text-sm font-semibold shadow-md hover:shadow-lg"
+                  onClick={() => setFilters({ city: '', property_type: '', budget: '' })}
+                  className="mt-4 px-4 py-2 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition text-sm font-medium"
                 >
                   Clear Filters
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {properties.map((property) => {
                     const imageUrl = property.cover_image_url || 
                       (property.images && property.images.length > 0 
                         ? (typeof property.images[0] === 'object' ? property.images[0].image_url : property.images[0])
                         : null);
+                    const applicationDate = property.auction_date ? new Date(property.auction_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 
                     return (
-                    <div
-                      key={property.id}
-                      className="group card overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                    >
-                      <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
-                        <div className="relative h-48 md:h-64 overflow-hidden bg-midnight-800">
+                      <div
+                        key={property.id}
+                        className="card overflow-hidden hover:shadow-2xl transition-all duration-300"
+                      >
+                        {/* Image Section */}
+                        <div className="relative h-56 bg-midnight-800 overflow-hidden">
                           {imageUrl ? (
                             <img
                               src={getImageUrl(imageUrl)}
@@ -237,81 +237,101 @@ function Properties() {
                               <span className="text-text-secondary">No Image</span>
                             </div>
                           )}
-                          <div className="absolute top-4 right-4">
-                            <span className={`px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm ${
-                              property.auction_status === 'active' ? 'bg-status-live/90 text-white' :
-                              property.auction_status === 'upcoming' ? 'bg-gold/90 text-midnight-950' :
-                              'bg-text-secondary/30 text-text-primary'
-                            }`}>
-                              {property.auction_status === 'active' ? '🔴 Bidding Live' : property.auction_status.toUpperCase()}
-                            </span>
+                          
+                          {/* Property ID Badge */}
+                          <div className="absolute top-4 left-4 bg-gold text-midnight-950 px-3 py-1 rounded-full text-xs font-semibold">
+                            P{property.id}
                           </div>
+
+                          {/* Wishlist Button */}
+                          <button
+                            onClick={() => toggleShortlist(property.id)}
+                            className="absolute top-4 right-4 p-2 bg-midnight-800 rounded-full hover:bg-midnight-700 transition"
+                          >
+                            <svg className={`w-5 h-5 ${isShortlisted(property.id) ? 'fill-status-live text-status-live' : 'text-text-muted'}`} viewBox="0 0 24 24">
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                          </button>
                         </div>
-                      </Link>
-                      <div className="p-4 md:p-6 flex flex-col">
-                        <div className="flex-grow">
-                          <Link to={`/properties/${property.id}`} onClick={() => handleView(property.id)}>
-                            <h3 className="text-lg md:text-2xl font-bold text-white mb-2 group-hover:text-gold transition-colors line-clamp-2 min-h-14 md:min-h-16">
-                              {property.title}
-                            </h3>
-                          </Link>
-                          <p className="text-text-secondary text-xs md:text-sm mb-3">
+
+                        {/* Content Section */}
+                        <div className="p-6">
+                          {/* Title */}
+                          <h3 className="text-lg md:text-2xl font-bold text-text-primary mb-3 line-clamp-2 min-h-14">
+                            {property.title}
+                          </h3>
+
+                          {/* Location */}
+                          <p className="text-text-secondary text-xs md:text-sm mb-4">
                             📍 {property.city}, {property.state}
-                            {property.property_size && ` • ${property.property_size} sq.ft`}
                           </p>
-                          {property.property_type && (
-                            <p className="text-text-secondary text-xs md:text-sm mb-3">Type: {property.property_type}</p>
-                          )}
-                          <div className="space-y-1 md:space-y-2">
+
+                          {/* Property Details Grid */}
+                          <div className="space-y-3 mb-4 pb-4 border-b border-midnight-700">
                             <div>
                               <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
                               <p className="text-lg md:text-2xl font-bold text-gold">
                                 ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
                               </p>
                             </div>
-                            <div className="h-5 md:h-6">
-                              {property.auction_status === 'active' && (
-                                <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
-                              )}
+
+                            <div className="grid grid-cols-2 gap-4 text-xs">
+                              <div>
+                                <p className="text-text-secondary mb-1">Application Date</p>
+                                <p className="font-semibold text-text-primary">{applicationDate}</p>
+                              </div>
+                              <div>
+                                <p className="text-text-secondary mb-1">Possession Status</p>
+                                <p className="font-semibold text-text-primary">Physical</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2 md:gap-3 mt-4 md:mt-6 pt-4 md:pt-6 border-t border-midnight-700">
-                          <Link
-                            to={`/properties/${property.id}`}
-                            onClick={() => handleView(property.id)}
-                            className="flex-1 btn-primary text-center text-xs md:text-sm py-3 md:py-4"
-                          >
-                            View Details
-                          </Link>
-                          <button
-                            onClick={() => toggleShortlist(property.id)}
-                            className={`px-3 md:px-4 py-3 md:py-4 rounded-btn transition-all ${
-                              isShortlisted(property.id)
-                                ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
-                                : 'bg-gray-700 text-white hover:bg-gray-600'
-                            }`}
-                            title="Add to Shortlist"
-                          >
-                            <svg className="w-5 h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              shareProperty(property);
-                              interestsAPI.track({ property_id: property.id, interest_type: 'share' });
-                            }}
-                            className="px-3 md:px-4 py-3 md:py-4 bg-status-live text-white rounded-btn hover:bg-green-600 transition-all"
-                            title="Share on WhatsApp"
-                          >
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .96 4.534.96 10.08c0 1.752.413 3.4 1.141 4.865L.06 23.884l9.251-2.39a11.717 11.717 0 005.739 1.49h.005c6.554 0 11.09-5.533 11.09-11.088a11.106 11.106 0 00-3.291-7.918"/>
-                            </svg>
-                          </button>
+
+                          {/* Seller/Institution Info */}
+                          <div className="mb-4 space-y-2 text-xs">
+                            <div className="flex items-start gap-2">
+                              <svg className="w-4 h-4 text-text-muted mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                              </svg>
+                              <div>
+                                <p className="text-text-secondary">GIC Housing Finance Limited</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <svg className="w-4 h-4 text-text-muted mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                              </svg>
+                              <div>
+                                <p className="text-text-secondary font-semibold">{property.title.split(' ')[0].toUpperCase()} KUMAR</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-3">
+                            <Link
+                              to={`/properties/${property.id}`}
+                              onClick={() => handleView(property.id)}
+                              className="flex-1 px-4 py-3 bg-gold text-midnight-950 text-center rounded-btn hover:bg-gold-hover transition font-semibold text-sm btn-primary"
+                            >
+                              View Details
+                            </Link>
+                            <button
+                              onClick={() => {
+                                shareProperty(property);
+                                interestsAPI.track({ property_id: property.id, interest_type: 'share' });
+                              }}
+                              className="px-4 py-3 bg-status-live text-white rounded-btn hover:bg-green-600 transition flex items-center justify-center gap-2"
+                              title="Share on WhatsApp"
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .96 4.534.96 10.08c0 1.752.413 3.4 1.141 4.865L.06 23.884l9.251-2.39a11.717 11.717 0 005.739 1.49h.005c6.554 0 11.09-5.533 11.09-11.088a11.106 11.106 0 00-3.291-7.918"/>
+                              </svg>
+                              Share
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
                     );
                   })}
                 </div>

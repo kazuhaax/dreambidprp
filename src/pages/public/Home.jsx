@@ -136,30 +136,33 @@ function Home() {
       {/* Filters Section - Moved to Hero */}
       <div className="bg-gradient-to-b from-midnight-900 to-midnight-900 px-4 md:px-8 py-12 md:py-16 border-b border-midnight-700">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-6 md:mb-8">Find Properties</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             <div>
-              <label className="label block mb-3">Status</label>
-              <select
-                value={filters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="input-field text-sm"
-              >
-                <option value="">All Status</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-              </select>
-            </div>
-            <div>
-              <label className="label block mb-3">City</label>
+              <label className="label block mb-3">Search Locality, City or State</label>
               <input
                 type="text"
                 value={filters.city}
                 onChange={(e) => handleFilterChange('city', e.target.value)}
-                placeholder="Search city..."
+                placeholder="Search"
                 className="input-field text-sm"
               />
+            </div>
+            <div>
+              <label className="label block mb-3">Budget</label>
+              <select
+                value={filters.min_price}
+                onChange={(e) => handleFilterChange('min_price', e.target.value)}
+                className="input-field text-sm"
+              >
+                <option value="">- Select from drop down -</option>
+                <option value="0">Under 20 Lakhs</option>
+                <option value="2000000">20-40 Lakhs</option>
+                <option value="4000000">40-60 Lakhs</option>
+                <option value="6000000">60 Lakhs - 1 Crore</option>
+                <option value="10000000">1-2 Crores</option>
+                <option value="20000000">2-5 Crores</option>
+                <option value="50000000">Above 5 Crores</option>
+              </select>
             </div>
             <div>
               <label className="label block mb-3">Property Type</label>
@@ -168,33 +171,13 @@ function Home() {
                 onChange={(e) => handleFilterChange('property_type', e.target.value)}
                 className="input-field text-sm"
               >
-                <option value="">All Types</option>
+                <option value="">- Select from drop down -</option>
                 <option value="house">House</option>
                 <option value="apartment">Apartment</option>
                 <option value="land">Land</option>
                 <option value="commercial">Commercial</option>
                 <option value="villa">Villa</option>
               </select>
-            </div>
-            <div>
-              <label className="label block mb-3">Min Price (₹)</label>
-              <input
-                type="number"
-                value={filters.min_price}
-                onChange={(e) => handleFilterChange('min_price', e.target.value)}
-                placeholder="Min"
-                className="input-field text-sm"
-              />
-            </div>
-            <div>
-              <label className="label block mb-3">Max Price (₹)</label>
-              <input
-                type="number"
-                value={filters.max_price}
-                onChange={(e) => handleFilterChange('max_price', e.target.value)}
-                placeholder="Max"
-                className="input-field text-sm"
-              />
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-6">
@@ -253,15 +236,6 @@ function Home() {
                         <span className="text-text-secondary">No Image</span>
                       </div>
                     )}
-                    <div className="absolute top-4 right-4">
-                      <span className={`px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm ${
-                        property.auction_status === 'active' ? 'bg-status-live/90 text-white' :
-                        property.auction_status === 'upcoming' ? 'bg-gold/90 text-midnight-950' :
-                        'bg-text-secondary/30 text-text-primary'
-                      }`}>
-                        {property.auction_status === 'active' ? '🔴 Bidding Live' : property.auction_status.toUpperCase()}
-                      </span>
-                    </div>
                   </div>
                   <div className="p-4 md:p-6 flex flex-col">
                     <div className="flex-grow">
@@ -273,11 +247,6 @@ function Home() {
                         <div>
                           <p className="text-text-secondary text-xs font-semibold uppercase tracking-wide mb-1">Reserve Price</p>
                           <p className="text-lg md:text-2xl font-bold text-gold">₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}</p>
-                        </div>
-                        <div className="h-5 md:h-6">
-                          {property.auction_status === 'active' && (
-                            <p className="text-status-live text-sm font-bold">✓ Bidding Live</p>
-                          )}
                         </div>
                       </div>
                     </div>

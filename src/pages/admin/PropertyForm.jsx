@@ -357,12 +357,11 @@ function PropertyForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Auction Date *
+                Auction Date
               </label>
               <input
                 type="datetime-local"
                 name="auction_date"
-                required
                 value={formData.auction_date}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"

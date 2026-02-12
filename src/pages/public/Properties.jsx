@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { propertiesAPI, interestsAPI } from '../../services/api';
 import { shareProperty } from '../../utils/whatsapp';
 import { getImageUrl } from '../../utils/imageUrl';
+import { useShortlist } from '../../contexts/ShortlistContext';
 
 // Custom hook for debouncing
 function useDebounce(value, delay) {
@@ -23,6 +24,7 @@ function useDebounce(value, delay) {
 }
 
 function Properties() {
+  const { toggleShortlist, isShortlisted } = useShortlist();
   const [filters, setFilters] = useState({
     status: '',
     city: '',
@@ -172,7 +174,7 @@ function Properties() {
           </div>
           <button
             onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-            className="px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition-all text-sm font-semibold"
+            className="px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover focus:bg-gold focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-midnight-900 active:bg-gold transition-all text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Clear Filters
           </button>
@@ -200,7 +202,7 @@ function Properties() {
                 <p className="text-text-secondary text-lg">No properties found matching your criteria.</p>
                 <button
                   onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-                  className="mt-4 px-4 py-2 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition-all text-sm font-semibold"
+                  className="mt-4 px-4 py-2 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover focus:bg-gold focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-midnight-900 active:bg-gold transition-all text-sm font-semibold shadow-md hover:shadow-lg"
                 >
                   Clear Filters
                 </button>
@@ -282,6 +284,19 @@ function Properties() {
                           >
                             View Details
                           </Link>
+                          <button
+                            onClick={() => toggleShortlist(property.id)}
+                            className={`px-3 md:px-4 py-3 md:py-4 rounded-btn transition-all ${
+                              isShortlisted(property.id)
+                                ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
+                                : 'bg-gray-700 text-white hover:bg-gray-600'
+                            }`}
+                            title="Add to Shortlist"
+                          >
+                            <svg className="w-5 h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
+                            </svg>
+                          </button>
                           <button
                             onClick={() => {
                               shareProperty(property);

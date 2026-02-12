@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
+import { ShortlistProvider } from './contexts/ShortlistContext';
 
 // Layout Components
 import PublicLayout from './components/PublicLayout';
@@ -13,6 +14,7 @@ import Home from './pages/public/Home';
 import Properties from './pages/public/Properties';
 import PropertyDetail from './pages/public/PropertyDetail';
 import Register from './pages/public/Register';
+import Contact from './pages/public/Contact';
 
 // Admin Pages
 import Login from './pages/admin/Login';
@@ -38,15 +40,17 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Routes>
+        <ShortlistProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50">
+              <Routes>
               {/* Public Routes */}
               <Route path="/" element={<PublicLayout />}>
                 <Route index element={<Home />} />
                 <Route path="properties" element={<Properties />} />
                 <Route path="properties/:id" element={<PropertyDetail />} />
                 <Route path="register" element={<Register />} />
+                <Route path="contact" element={<Contact />} />
               </Route>
 
               {/* Admin Login */}
@@ -100,6 +104,7 @@ function App() {
             />
           </div>
         </Router>
+        </ShortlistProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -126,9 +126,9 @@ router.get('/', [
     const countResult = await pool.query(countQuery, params);
     const total = parseInt(countResult.rows[0].count);
 
-    // Add pagination
+    // Add pagination - Sort by application_date in descending order
     paramCount++;
-    query += ` ORDER BY created_at DESC LIMIT $${paramCount}`;
+    query += ` ORDER BY COALESCE(application_date, created_at) DESC LIMIT $${paramCount}`;
     params.push(limit);
     
     paramCount++;

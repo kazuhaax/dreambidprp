@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { propertiesAPI } from '../../services/api';
 import { shareProperty } from '../../utils/whatsapp';
 import { getImageUrl } from '../../utils/imageUrl';
+import { useShortlist } from '../../contexts/ShortlistContext';
 
 // Custom hook for typing effect
 function useTypewriter(text, speed = 50) {
@@ -44,6 +45,8 @@ function useDebounce(value, delay) {
 }
 
 function Home() {
+  const { toggleShortlist, isShortlisted } = useShortlist();
+  const scrollContainerRef = useRef(null);
   const [filters, setFilters] = useState({
     status: '',
     city: '',
@@ -123,34 +126,14 @@ function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            <a href="#how-it-works" className="btn-secondary inline-flex items-center justify-center gap-2 text-center">
-              How It Works
-            </a>
+            <Link to="/register" className="btn-secondary inline-flex items-center justify-center gap-2 text-center">
+              Get Started
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Trust Strip */}
-      <div className="bg-gradient-to-b from-midnight-900 to-midnight-900 border-b border-midnight-700 py-12 md:py-20 px-4 md:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-bold text-gold mb-2">100%</p>
-              <p className="text-base md:text-xl text-text-nav">Verified Listings</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-bold text-gold mb-2">Transparent</p>
-              <p className="text-base md:text-xl text-text-nav">Bidding</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-bold text-gold mb-2">Trusted by HNI</p>
-              <p className="text-base md:text-xl text-text-nav">Investors</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters Section */}
+      {/* Filters Section - Moved to Hero */}
       <div className="bg-gradient-to-b from-midnight-900 to-midnight-900 px-4 md:px-8 py-12 md:py-16 border-b border-midnight-700">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-6 md:mb-8">Find Properties</h2>
@@ -217,7 +200,7 @@ function Home() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-6">
             <button
               onClick={() => setFilters({ status: '', city: '', property_type: '', min_price: '', max_price: '' })}
-              className="px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition-all text-sm font-semibold"
+              className="px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover focus:bg-gold focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-midnight-900 active:bg-gold transition-all text-sm font-semibold shadow-md hover:shadow-lg"
             >
               Clear Filters
             </button>
@@ -306,6 +289,19 @@ function Home() {
                         View Details
                       </Link>
                       <button
+                        onClick={() => toggleShortlist(property.id)}
+                        className={`px-3 md:px-4 py-3 md:py-4 rounded-btn transition-all ${
+                          isShortlisted(property.id)
+                            ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
+                            : 'bg-gray-700 text-white hover:bg-gray-600'
+                        }`}
+                        title="Add to Shortlist"
+                      >
+                        <svg className="w-5 h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
+                        </svg>
+                      </button>
+                      <button
                         onClick={() => shareProperty(property)}
                         className="px-3 md:px-4 py-3 md:py-4 bg-status-live text-white rounded-btn hover:bg-green-600 transition-all"
                         title="Share on WhatsApp"
@@ -338,32 +334,259 @@ function Home() {
         </div>
       </div>
 
-      {/* How it Works Section */}
-      <div id="how-it-works" className="bg-gradient-to-b from-midnight-950 to-midnight-900 px-8 py-24 border-t border-midnight-700">
+      {/* More Properties Section by City */}
+      <div className="bg-gradient-to-b from-midnight-950 to-midnight-900 px-4 md:px-8 py-12 md:py-24">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl font-serif font-bold text-white text-center mb-20">How DreamBid Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-dark-elevation">
-                <span className="text-3xl font-bold text-midnight-950">1</span>
-              </div>
-              <h4 className="text-2xl font-bold text-white mb-3">Discover</h4>
-              <p className="text-text-secondary">Browse verified luxury properties curated for serious investors</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-10 md:mb-16">More Properties</h2>
+
+          {properties.length > 0 && (
+            <div className="space-y-12">
+              {/* Properties grouped by city */}
+              {(() => {
+                const citiesMap = {};
+                properties.forEach(prop => {
+                  const city = prop.city || 'Other';
+                  if (!citiesMap[city]) citiesMap[city] = [];
+                  citiesMap[city].push(prop);
+                });
+                
+                return Object.entries(citiesMap).map(([city, cityProperties]) => (
+                  <div key={city} className="group">
+                    <h3 className="text-2xl md:text-3xl font-bold text-gold mb-6">Properties in {city}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                      {cityProperties.slice(0, 3).map((property) => {
+                        const imageUrl = property.cover_image_url || 
+                          (property.images && property.images.length > 0 
+                            ? (typeof property.images[0] === 'object' ? property.images[0].image_url : property.images[0])
+                            : null);
+
+                        return (
+                        <div key={property.id} className="card overflow-hidden hover:shadow-2xl transition-all duration-300">
+                          <div className="relative h-48 md:h-56 overflow-hidden bg-midnight-800">
+                            {imageUrl ? (
+                              <img
+                                src={getImageUrl(imageUrl)}
+                                alt={property.title}
+                                className="w-full h-full object-cover hover:scale-110 transition duration-300"
+                                onError={(e) => {
+                                  e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%231F2A3D" width="400" height="300"/%3E%3Ctext fill="%23666" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-midnight-800">
+                                <span className="text-text-secondary">No Image</span>
+                              </div>
+                            )}
+                            <div className="absolute top-4 right-4">
+                              <span className={`px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm ${
+                                property.auction_status === 'active' ? 'bg-status-live/90 text-white' :
+                                property.auction_status === 'upcoming' ? 'bg-gold/90 text-midnight-950' :
+                                'bg-text-secondary/30 text-text-primary'
+                              }`}>
+                                {property.auction_status === 'active' ? '🔴 Bidding Live' : property.auction_status.toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-4 md:p-6">
+                            <h3 className="text-lg md:text-xl font-bold text-white mb-2 line-clamp-2">{property.title}</h3>
+                            <p className="text-text-secondary text-xs md:text-sm mb-3">
+                              📍 {property.city}, {property.state} • {property.property_size} sq.ft
+                            </p>
+                            <p className="text-lg md:text-2xl font-bold text-gold mb-4">₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}</p>
+                            <div className="flex gap-2">
+                              <Link
+                                to={`/properties/${property.id}`}
+                                className="flex-1 btn-primary text-center text-xs md:text-sm py-2 md:py-3"
+                              >
+                                View Details
+                              </Link>
+                              <button
+                                onClick={() => toggleShortlist(property.id)}
+                                className={`px-3 py-2 md:py-3 rounded-btn transition-all ${
+                                  isShortlisted(property.id)
+                                    ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
+                                    : 'bg-gray-700 text-white hover:bg-gray-600'
+                                }`}
+                                title="Add to Shortlist"
+                              >
+                                <svg className="w-4 h-4 md:w-5 md:h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-dark-elevation">
-                <span className="text-3xl font-bold text-midnight-950">2</span>
+          )}
+        </div>
+      </div>
+
+      {/* Your Buying Process Section */}
+      <div id="buying-process" className="bg-white px-4 md:px-8 py-16 md:py-24 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <p className="text-sm md:text-base font-semibold text-gold mb-2">HOW IT WORKS</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The <span className="text-blue-600">Buying Process</span></h2>
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">How to buy properties from banks? We're here to guide you through the process, making your property acquisition journey seamless and hassle-free.</p>
+          </div>
+
+          {/* Horizontal Carousel */}
+          <div className="relative">
+            {/* Scroll Container */}
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-6 overflow-x-auto pb-8 scroll-smooth hide-scrollbar"
+              style={{ scrollBehavior: 'smooth' }}
+            >
+              {/* Step 1 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-6 border border-cyan-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-cyan-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-gray-900">01</span>
+                  </div>
+                  <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Choose a Property</h3>
+                <p className="text-gray-700 text-sm">Explore our listings & find a property that meets your requirements.</p>
               </div>
-              <h4 className="text-2xl font-bold text-white mb-3">Evaluate</h4>
-              <p className="text-text-secondary">Access detailed property information, images, and documentation</p>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-dark-elevation">
-                <span className="text-3xl font-bold text-midnight-950">3</span>
+
+              {/* Step 2 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-6 border border-cyan-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">02</span>
+                  </div>
+                  <svg className="w-6 h-6 text-cyan-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Pay EMD</h3>
+                <p className="text-gray-700 text-sm">Pay 10% earnest money deposit as an assurance of interest in the property.</p>
               </div>
-              <h4 className="text-2xl font-bold text-white mb-3">Bid</h4>
-              <p className="text-text-secondary">Participate in transparent auctions and secure your investment</p>
+
+              {/* Step 3 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">03</span>
+                  </div>
+                  <svg className="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Submit Application</h3>
+                <p className="text-gray-700 text-sm">Submit the Common Application Form (CAF) and prepare for auction.</p>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">04</span>
+                  </div>
+                  <svg className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zM5 20a6 6 0 0110-12 6 6 0 0110 12H5z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Participate in Auction</h3>
+                <p className="text-gray-700 text-sm">Register with the auction portal and take part in the bidding process.</p>
+              </div>
+
+              {/* Step 5 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">05</span>
+                  </div>
+                  <svg className="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Auction Outcome</h3>
+                <p className="text-gray-700 text-sm">If you win, pay 15%. If you lose, get the EMD refund.</p>
+              </div>
+
+              {/* Step 6 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-6 border border-yellow-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-gray-900">06</span>
+                  </div>
+                  <svg className="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Pay 75% in 15 Days</h3>
+                <p className="text-gray-700 text-sm">Pay the remaining 75% within 15 Days to start the registration process.</p>
+              </div>
+
+              {/* Step 7 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-orange-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">07</span>
+                  </div>
+                  <svg className="w-6 h-6 text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Obtain Sale Certificate</h3>
+                <p className="text-gray-700 text-sm">The seller institution issues the sale certificate after payment completion.</p>
+              </div>
+
+              {/* Step 8 */}
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 border border-red-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-white">08</span>
+                  </div>
+                  <svg className="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l4-4m0 0l4 4m-4-4V5" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Register the Property</h3>
+                <p className="text-gray-700 text-sm">Authorized officer registers the property in the Sub-Registrar Office.</p>
+              </div>
             </div>
+
+            {/* Navigation Arrows */}
+            <div className="flex justify-center gap-4 mt-8">
+              <button
+                onClick={() => {
+                  if (scrollContainerRef?.current) {
+                    scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+                  }
+                }}
+                className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-all"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  if (scrollContainerRef?.current) {
+                    scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+                  }
+                }}
+                className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-all"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Timeline Line */}
+            <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-400 to-red-400 -mt-8 hidden md:block"></div>
           </div>
         </div>
       </div>

@@ -30,51 +30,51 @@ const mapOptions = {
 const buyingProcessSteps = [
   { 
     number: 1, 
-    title: 'Register', 
-    description: 'Sign up on platform',
-    icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+    title: 'Choose a Property', 
+    description: 'Explore our listings & find a property that meets your requirements.',
+    icon: 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'
   },
   { 
     number: 2, 
-    title: 'Explore', 
-    description: 'Browse properties',
-    icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+    title: 'Pay EMD', 
+    description: 'Pay 10% earnest money deposit as an assurance of interest in the property.',
+    icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
   },
   { 
     number: 3, 
-    title: 'Inspect', 
-    description: 'Visit property site',
-    icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'
-  },
-  { 
-    number: 4, 
-    title: 'Documents', 
-    description: 'Review legal papers',
+    title: 'Submit Application', 
+    description: 'Submit the Common Application Form (CAF) and prepare for auction.',
     icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
   },
   { 
+    number: 4, 
+    title: 'Participate in Auction', 
+    description: 'Register with the auction portal and take part in the bidding process.',
+    icon: 'M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zM5 20a6 6 0 0110-12 6 6 0 0110 12H5z'
+  },
+  { 
     number: 5, 
-    title: 'EMD Payment', 
-    description: 'Deposit earnest money',
-    icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+    title: 'Auction Outcome', 
+    description: 'If you win, pay 15%. If you lose, get the EMD refund.',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z'
   },
   { 
     number: 6, 
-    title: 'Participate', 
-    description: 'Join online auction',
-    icon: 'M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z'
+    title: 'Pay 75% in 15 Days', 
+    description: 'Pay the remaining 75% within 15 Days to start the registration process.',
+    icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
   },
   { 
     number: 7, 
-    title: 'Win Bid', 
-    description: 'Complete payment',
+    title: 'Obtain Sale Certificate', 
+    description: 'The seller institution issues the sale certificate after payment completion.',
     icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
   },
   { 
     number: 8, 
-    title: 'Possession', 
-    description: 'Get ownership transfer',
-    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'
+    title: 'Register the Property', 
+    description: 'Authorized officer registers the property in the Sub-Registrar Office.',
+    icon: 'M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l4-4m0 0l4 4m-4-4V5'
   },
 ];
 

@@ -22,13 +22,16 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 md:px-16">
         <div className="flex justify-between items-center py-4 md:py-8">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">D</span>
+            </div>
             <Link 
               to="/" 
               onClick={closeMenu}
               className="text-xl md:text-2xl font-semibold text-white hover:text-gold transition-all duration-300"
             >
-              DreamBid
+              Dream<span className="text-red-500">Bid</span>
             </Link>
           </div>
 
@@ -45,9 +48,15 @@ function Navbar() {
                 <Link to="/properties" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors first:rounded-t-lg">
                   Properties
                 </Link>
-                <a href="#how-it-works" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors">
+                <Link to="/register" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors">
+                  Get Started
+                </Link>
+                <a href="#buying-process" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors">
                   How it Works
                 </a>
+                <Link to="/contact" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors">
+                  Contact Us
+                </Link>
                 <Link to="/" className="block px-4 py-3 text-text-nav hover:text-gold hover:bg-midnight-700 transition-colors last:rounded-b-lg">
                   Home
                 </Link>
@@ -91,13 +100,27 @@ function Navbar() {
               >
                 Properties
               </Link>
+              <Link
+                to="/register"
+                onClick={() => setMenuOpen(false)}
+                className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
+              >
+                Get Started
+              </Link>
               <a
-                href="#how-it-works"
+                href="#buying-process"
                 onClick={() => setMenuOpen(false)}
                 className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
               >
                 How it Works
               </a>
+              <Link
+                to="/contact"
+                onClick={() => setMenuOpen(false)}
+                className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
+              >
+                Contact Us
+              </Link>
               <Link
                 to="/admin/login"
                 onClick={() => setMenuOpen(false)}

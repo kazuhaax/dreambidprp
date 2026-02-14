@@ -48,11 +48,9 @@ function Home() {
   const { toggleShortlist, isShortlisted } = useShortlist();
   const scrollContainerRef = useRef(null);
   const [filters, setFilters] = useState({
-    status: '',
     city: '',
     property_type: '',
-    min_price: '',
-    max_price: '',
+    budget: '',
   });
 
   // Typewriter effect for hero title
@@ -61,35 +59,24 @@ function Home() {
 
   // Debounce text inputs (city) to avoid API calls on every keystroke
   const debouncedCity = useDebounce(filters.city, 500);
-  const debouncedMinPrice = useDebounce(filters.min_price, 500);
-  const debouncedMaxPrice = useDebounce(filters.max_price, 500);
 
   // Create query filters object with debounced values
   const queryFilters = useMemo(() => ({
-    status: filters.status,
     city: debouncedCity,
     property_type: filters.property_type,
-    min_price: debouncedMinPrice,
-    max_price: debouncedMaxPrice,
-  }), [filters.status, debouncedCity, filters.property_type, debouncedMinPrice, debouncedMaxPrice]);
+    min_price: filters.budget ? parseInt(filters.budget) : '',
+  }), [debouncedCity, filters.property_type, filters.budget]);
 
   const { data: featuredData } = useQuery(
     ['featured-properties', queryFilters],
     () => {
       // Remove empty string values for numeric fields to avoid validation errors
       const params = { limit: 6 };
-      // Status can be empty string (means all), so include it if it exists
-      if (queryFilters.status !== undefined && queryFilters.status !== null) {
-        params.status = queryFilters.status;
-      }
       if (queryFilters.city) params.city = queryFilters.city;
       if (queryFilters.property_type) params.property_type = queryFilters.property_type;
       // Only include numeric fields if they have actual values
       if (queryFilters.min_price && queryFilters.min_price !== '') {
         params.min_price = parseFloat(queryFilters.min_price);
-      }
-      if (queryFilters.max_price && queryFilters.max_price !== '') {
-        params.max_price = parseFloat(queryFilters.max_price);
       }
       return propertiesAPI.getAll(params);
     }
@@ -154,8 +141,8 @@ function Home() {
               <div className="border-b md:border-b-0 md:border-r border-midnight-700 p-6">
                 <label className="block text-xs font-semibold text-text-soft uppercase tracking-wide mb-3">Budget</label>
                 <select
-                  value={filters.min_price}
-                  onChange={(e) => handleFilterChange('min_price', e.target.value)}
+                  value={filters.budget}
+                  onChange={(e) => handleFilterChange('budget', e.target.value)}
                   className="w-full px-4 py-3 bg-midnight-800 border-b-2 border-midnight-700 text-text-primary text-sm focus:outline-none focus:border-gold transition appearance-none cursor-pointer"
                   style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23CBA135' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}
                 >
@@ -260,19 +247,6 @@ function Home() {
                         View Details
                       </Link>
                       <button
-                        onClick={() => toggleShortlist(property.id)}
-                        className={`px-3 md:px-4 py-3 md:py-4 rounded-btn transition-all ${
-                          isShortlisted(property.id)
-                            ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
-                            : 'bg-gray-700 text-white hover:bg-gray-600'
-                        }`}
-                        title="Add to Shortlist"
-                      >
-                        <svg className="w-5 h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
-                        </svg>
-                      </button>
-                      <button
                         onClick={() => shareProperty(property)}
                         className="px-3 md:px-4 py-3 md:py-4 bg-status-live text-white rounded-btn hover:bg-green-600 transition-all"
                         title="Share on WhatsApp"
@@ -364,24 +338,20 @@ function Home() {
                               📍 {property.city}, {property.state} • {property.property_size} sq.ft
                             </p>
                             <p className="text-lg md:text-2xl font-bold text-gold mb-4">₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}</p>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 md:gap-3 pt-4 md:pt-6 border-t border-midnight-700">
                               <Link
                                 to={`/properties/${property.id}`}
-                                className="flex-1 btn-primary text-center text-xs md:text-sm py-2 md:py-3"
+                                className="flex-1 btn-primary text-center text-xs md:text-sm py-3 md:py-4"
                               >
                                 View Details
                               </Link>
                               <button
-                                onClick={() => toggleShortlist(property.id)}
-                                className={`px-3 py-2 md:py-3 rounded-btn transition-all ${
-                                  isShortlisted(property.id)
-                                    ? 'bg-gold text-midnight-950 hover:bg-gold-hover'
-                                    : 'bg-gray-700 text-white hover:bg-gray-600'
-                                }`}
-                                title="Add to Shortlist"
+                                onClick={() => shareProperty(property)}
+                                className="px-3 md:px-4 py-3 md:py-4 bg-status-live text-white rounded-btn hover:bg-green-600 transition-all"
+                                title="Share on WhatsApp"
                               >
-                                <svg className="w-4 h-4 md:w-5 md:h-5" fill={isShortlisted(property.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .96 4.534.96 10.08c0 1.752.413 3.4 1.141 4.865L.06 23.884l9.251-2.39a11.717 11.717 0 005.739 1.49h.005c6.554 0 11.09-5.533 11.09-11.088a11.106 11.106 0 00-3.291-7.918"/>
                                 </svg>
                               </button>
                             </div>

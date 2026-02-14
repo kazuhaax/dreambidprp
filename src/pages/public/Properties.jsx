@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { propertiesAPI, interestsAPI } from '../../services/api';
 import { shareProperty } from '../../utils/whatsapp';
 import { getImageUrl } from '../../utils/imageUrl';
@@ -24,13 +24,18 @@ function useDebounce(value, delay) {
 }
 
 function Properties() {
+  const location = useLocation();
   const { toggleShortlist, isShortlisted } = useShortlist();
-  const [filters, setFilters] = useState({
+  
+  // Initialize filters from location state if available
+  const initialFilters = location.state?.filters || {
     city: '',
     property_type: '',
     budget: '',
-  });
-  const [sortBy, setSortBy] = useState('auction_date');
+  };
+  
+  const [filters, setFilters] = useState(initialFilters);
+  const [sortBy, setSortBy] = useState('reserve_price');
   const [page, setPage] = useState(1);
   const limit = 12;
 
@@ -144,7 +149,10 @@ function Properties() {
 
             {/* Search Button */}
             <div className="flex items-end">
-              <button className="w-full px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition font-semibold text-sm">
+              <button 
+                onClick={() => setPage(1)}
+                className="w-full px-6 py-3 bg-gold text-midnight-950 rounded-btn hover:bg-gold-hover transition font-semibold text-sm"
+              >
                 Search
               </button>
             </div>

@@ -1,12 +1,12 @@
 import express from 'express';
 import UserController from '../controllers/UserController.js';
-import { authenticateToken } from '../middleware/auth.js';
-import upload from '../middleware/upload.js';
+import { authenticate } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
 
 // All user routes require authentication
-router.use(authenticateToken);
+router.use(authenticate);
 
 // Get current user info
 router.get('/me', UserController.getMe);

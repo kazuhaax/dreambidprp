@@ -12,5 +12,10 @@
   to = "https://web-production-73cce.up.railway.app/api/:splat"
   status = 200
   force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
   to = "/index.html"
   status = 200

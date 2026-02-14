@@ -63,9 +63,14 @@ function Navbar() {
               </div>
             </div>
             
-            <Link to="/admin/login" className="inline-flex items-center gap-2 bg-gold text-midnight-950 px-6 md:px-10 py-3 md:py-4 rounded-btn hover:bg-gold-hover transition-all duration-300 font-semibold text-xs md:text-sm">
-              Entity Login
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link to="/login" className="text-text-nav hover:text-gold px-4 py-2 rounded-lg transition-colors font-medium text-sm">
+                Sign In
+              </Link>
+              <Link to="/signup" className="inline-flex items-center gap-2 bg-gold text-midnight-950 px-6 md:px-10 py-3 md:py-4 rounded-btn hover:bg-gold-hover transition-all duration-300 font-semibold text-xs md:text-sm">
+                Sign Up
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Hamburger Button */}
@@ -122,9 +127,23 @@ function Navbar() {
                 Contact Us
               </Link>
               <Link
-                to="/admin/login"
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
                 onClick={() => setMenuOpen(false)}
                 className="inline-flex items-center gap-2 bg-gold text-midnight-950 px-4 py-3 rounded-btn text-base font-semibold hover:bg-gold-hover transition-all duration-300 w-full justify-center"
+              >
+                Sign Up
+              </Link>
+              <Link
+                to="/admin/login"
+                onClick={() => setMenuOpen(false)}
+                className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors text-center"
               >
                 Entity Login
               </Link>

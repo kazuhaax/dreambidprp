@@ -21,63 +21,98 @@ class UserActivity {
 
   // Get user activity history
   static async getUserActivity(userId, limit = 100, offset = 0) {
-    const result = await pool.query(
-      `SELECT id, user_id, action, action_category, data, created_at
-       FROM user_activity
-       WHERE user_id = $1
-       ORDER BY created_at DESC
-       LIMIT $2 OFFSET $3`,
-      [userId, limit, offset]
-    );
-
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT id, user_id, action, action_category, data, created_at
+         FROM user_activity
+         WHERE user_id = $1
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [userId, limit, offset]
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        console.warn('user_activity table does not exist yet');
+        return [];
+      }
+      throw error;
+    }
   }
 
   // Get activity count for user
   static async getUserActivityCount(userId) {
-    const result = await pool.query(
-      `SELECT COUNT(*) as count FROM user_activity WHERE user_id = $1`,
-      [userId]
-    );
-    return parseInt(result.rows[0].count, 10);
+    try {
+      const result = await pool.query(
+        `SELECT COUNT(*) as count FROM user_activity WHERE user_id = $1`,
+        [userId]
+      );
+      return parseInt(result.rows[0].count, 10);
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return 0;
+      }
+      throw error;
+    }
   }
 
   // Get all activities (admin only)
   static async getAllActivities(limit = 100, offset = 0) {
-    const result = await pool.query(
-      `SELECT id, user_id, action, action_category, data, created_at
-       FROM user_activity
-       ORDER BY created_at DESC
-       LIMIT $1 OFFSET $2`,
-      [limit, offset]
-    );
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT id, user_id, action, action_category, data, created_at
+         FROM user_activity
+         ORDER BY created_at DESC
+         LIMIT $1 OFFSET $2`,
+        [limit, offset]
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return [];
+      }
+      throw error;
+    }
   }
 
   // Get activities by action category
   static async getActivitiesByCategory(actionCategory, limit = 100, offset = 0) {
-    const result = await pool.query(
-      `SELECT id, user_id, action, action_category, data, created_at
-       FROM user_activity
-       WHERE action_category = $1
-       ORDER BY created_at DESC
-       LIMIT $2 OFFSET $3`,
-      [actionCategory, limit, offset]
-    );
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT id, user_id, action, action_category, data, created_at
+         FROM user_activity
+         WHERE action_category = $1
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [actionCategory, limit, offset]
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return [];
+      }
+      throw error;
+    }
   }
 
   // Get activities by action name
   static async getActivitiesByAction(action, limit = 100, offset = 0) {
-    const result = await pool.query(
-      `SELECT id, user_id, action, action_category, data, created_at
-       FROM user_activity
-       WHERE action = $1
-       ORDER BY created_at DESC
-       LIMIT $2 OFFSET $3`,
-      [action, limit, offset]
-    );
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT id, user_id, action, action_category, data, created_at
+         FROM user_activity
+         WHERE action = $1
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [action, limit, offset]
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return [];
+      }
+      throw error;
+    }
   }
 
   // Delete activities older than specified days
@@ -97,34 +132,48 @@ class UserActivity {
 
   // Get user activity statistics
   static async getUserActivityStats(userId, daysBack = 30) {
-    const result = await pool.query(
-      `SELECT 
-        action,
-        COUNT(*) as count,
-        MAX(created_at) as last_activity
-       FROM user_activity
-       WHERE user_id = $1 
-         AND created_at >= NOW() - INTERVAL '${daysBack} days'
-       GROUP BY action
-       ORDER BY count DESC`,
-      [userId]
-    );
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT 
+          action,
+          COUNT(*) as count,
+          MAX(created_at) as last_activity
+         FROM user_activity
+         WHERE user_id = $1 
+           AND created_at >= NOW() - INTERVAL '${daysBack} days'
+         GROUP BY action
+         ORDER BY count DESC`,
+        [userId]
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return [];
+      }
+      throw error;
+    }
   }
 
   // Get all activity statistics
   static async getActivityStats(daysBack = 30) {
-    const result = await pool.query(
-      `SELECT 
-        action_category,
-        COUNT(*) as count,
-        COUNT(DISTINCT user_id) as unique_users
-       FROM user_activity
-       WHERE created_at >= NOW() - INTERVAL '${daysBack} days'
-       GROUP BY action_category
-       ORDER BY count DESC`
-    );
-    return result.rows;
+    try {
+      const result = await pool.query(
+        `SELECT 
+          action_category,
+          COUNT(*) as count,
+          COUNT(DISTINCT user_id) as unique_users
+         FROM user_activity
+         WHERE created_at >= NOW() - INTERVAL '${daysBack} days'
+         GROUP BY action_category
+         ORDER BY count DESC`
+      );
+      return result.rows;
+    } catch (error) {
+      if (error.code === '42P01') { // relation does not exist
+        return [];
+      }
+      throw error;
+    }
   }
 }
 

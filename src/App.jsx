@@ -15,9 +15,11 @@ import Properties from './pages/public/Properties';
 import PropertyDetail from './pages/public/PropertyDetail';
 import Register from './pages/public/Register';
 import Contact from './pages/public/Contact';
+import SignUp from './pages/public/SignUp';
+import PublicLogin from './pages/public/Login';
 
 // Admin Pages
-import Login from './pages/admin/Login';
+import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import AdminProperties from './pages/admin/AdminProperties';
 import PropertyForm from './pages/admin/PropertyForm';
@@ -51,10 +53,12 @@ function App() {
                 <Route path="properties/:id" element={<PropertyDetail />} />
                 <Route path="register" element={<Register />} />
                 <Route path="contact" element={<Contact />} />
+                <Route path="signup" element={<SignUp />} />
+                <Route path="login" element={<PublicLogin />} />
               </Route>
 
               {/* Admin Login */}
-              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
 
               {/* Protected Admin Routes */}
               <Route

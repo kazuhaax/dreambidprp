@@ -5,11 +5,11 @@
 
 [build.environment]
   NODE_VERSION = "18.18.0"
-  VITE_API_URL = "https://YOUR-RAILWAY-BACKEND-URL.up.railway.app/api"
+  VITE_API_URL = "https://web-production-73cce.up.railway.app/api"
 
 [[redirects]]
   from = "/api/*"
-  to = "https://YOUR-RAILWAY-BACKEND-URL.up.railway.app/api/:splat"
+  to = "https://web-production-73cce.up.railway.app/api/:splat"
   status = 200
   force = false
   to = "/index.html"

@@ -136,28 +136,28 @@ function Home() {
       {/* Search Bar Section */}
       <div className="relative -mt-20 sm:-mt-24 md:-mt-32 px-4 sm:px-6 md:px-8 pb-0 z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-midnight-800 rounded-2xl shadow-2xl overflow-hidden border border-midnight-700">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 p-0">
               {/* Search Locality Input */}
-              <div className="border-b md:border-b-0 md:border-r border-gray-200 p-6">
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-3">Search Locality, City or State</label>
+              <div className="border-b md:border-b-0 md:border-r border-midnight-700 p-6">
+                <label className="block text-xs font-semibold text-text-soft uppercase tracking-wide mb-3">Search Locality, City or State</label>
                 <input
                   type="text"
                   value={filters.city}
                   onChange={(e) => handleFilterChange('city', e.target.value)}
                   placeholder="Enter location"
-                  className="w-full px-4 py-3 bg-white border-b-2 border-gray-300 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-gold transition"
+                  className="w-full px-4 py-3 bg-midnight-800 border-b-2 border-midnight-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-gold transition"
                 />
               </div>
 
               {/* Budget Dropdown */}
-              <div className="border-b md:border-b-0 md:border-r border-gray-200 p-6">
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-3">Budget</label>
+              <div className="border-b md:border-b-0 md:border-r border-midnight-700 p-6">
+                <label className="block text-xs font-semibold text-text-soft uppercase tracking-wide mb-3">Budget</label>
                 <select
                   value={filters.min_price}
                   onChange={(e) => handleFilterChange('min_price', e.target.value)}
-                  className="w-full px-4 py-3 bg-white border-b-2 border-gray-300 text-gray-900 text-sm focus:outline-none focus:border-gold transition appearance-none cursor-pointer"
-                  style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}
+                  className="w-full px-4 py-3 bg-midnight-800 border-b-2 border-midnight-700 text-text-primary text-sm focus:outline-none focus:border-gold transition appearance-none cursor-pointer"
+                  style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23CBA135' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}
                 >
                   <option value="">- Select from dropdown -</option>
                   <option value="0">Under 20L</option>
@@ -171,13 +171,13 @@ function Home() {
               </div>
 
               {/* Property Type Dropdown */}
-              <div className="border-b md:border-b-0 md:border-r border-gray-200 p-6">
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-3">Property Type</label>
+              <div className="border-b md:border-b-0 md:border-r border-midnight-700 p-6">
+                <label className="block text-xs font-semibold text-text-soft uppercase tracking-wide mb-3">Property Type</label>
                 <select
                   value={filters.property_type}
                   onChange={(e) => handleFilterChange('property_type', e.target.value)}
-                  className="w-full px-4 py-3 bg-white border-b-2 border-gray-300 text-gray-900 text-sm focus:outline-none focus:border-gold transition appearance-none cursor-pointer"
-                  style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}
+                  className="w-full px-4 py-3 bg-midnight-800 border-b-2 border-midnight-700 text-text-primary text-sm focus:outline-none focus:border-gold transition appearance-none cursor-pointer"
+                  style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23CBA135' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}
                 >
                   <option value="">- Select from dropdown -</option>
                   <option value="house">House</option>
@@ -193,7 +193,7 @@ function Home() {
                 <Link
                   to="/properties"
                   state={{ filters: filters }}
-                  className="w-full px-6 py-3 bg-gold text-midnight-950 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-gold transition-all font-semibold text-center shadow-md hover:shadow-lg"
+                  className="w-full px-6 py-3 bg-gold text-midnight-950 rounded-lg hover:bg-gold-hover focus:outline-none focus:ring-2 focus:ring-gold transition-all font-semibold text-center shadow-md hover:shadow-lg"
                 >
                   Search
                 </Link>

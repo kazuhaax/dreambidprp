@@ -1,18 +1,10 @@
 [build]
   command = "npm run build"
-  functions = "functions"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18.18.0"
   VITE_API_URL = "https://web-production-73cce.up.railway.app/api"
-  VITE_NODE_ENV = "production"
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://web-production-73cce.up.railway.app/api/:splat"
-  status = 200
-  force = false
 
 [[redirects]]
   from = "/*"

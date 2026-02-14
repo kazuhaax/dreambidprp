@@ -282,25 +282,7 @@ function Properties() {
                             </div>
                           </div>
 
-                          {/* Seller/Institution Info */}
-                          <div className="mb-4 space-y-2 text-xs">
-                            <div className="flex items-start gap-2">
-                              <svg className="w-4 h-4 text-text-muted mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                              </svg>
-                              <div>
-                                <p className="text-text-secondary">GIC Housing Finance Limited</p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <svg className="w-4 h-4 text-text-muted mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                              </svg>
-                              <div>
-                                <p className="text-text-secondary font-semibold">{property.title.split(' ')[0].toUpperCase()} KUMAR</p>
-                              </div>
-                            </div>
-                          </div>
+                          
 
                           {/* Action Buttons */}
                           <div className="flex gap-3">

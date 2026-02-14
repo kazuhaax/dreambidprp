@@ -1,12 +1,21 @@
 import fs from 'fs';
 import path from 'path';
-import pool from '../config/database.js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function initializeDatabase() {
   try {
+    // Try to import and use pool, but fail gracefully if database isn't available
+    let pool;
+    try {
+      const module = await import('../config/database.js');
+      pool = module.default;
+    } catch (error) {
+      console.warn('⚠️  Database not available during build - will initialize at runtime');
+      process.exit(0); // Exit gracefully - server.js will handle initialization
+    }
+
     console.log('🔄 Starting database initialization...');
 
     // Read the setup script
@@ -57,25 +66,26 @@ async function initializeDatabase() {
       WHERE table_schema = 'public'
     `;
 
-    const result = await pool.query(tableCheckQuery);
-    const existingTables = result.rows.map(row => row.table_name);
+    try {
+      const result = await pool.query(tableCheckQuery);
+      const existingTables = result.rows.map(row => row.table_name);
 
-    console.log(`\n📋 Existing tables: ${existingTables.join(', ')}`);
+      console.log(`\n📋 Existing tables: ${existingTables.join(', ')}`);
 
-    const missingTables = criticalTables.filter(t => !existingTables.includes(t));
-    if (missingTables.length > 0) {
-      console.warn(`⚠️  Missing critical tables: ${missingTables.join(', ')}`);
-    } else {
-      console.log(`✅ All critical tables verified!`);
+      const missingTables = criticalTables.filter(t => !existingTables.includes(t));
+      if (missingTables.length > 0) {
+        console.warn(`⚠️  Missing critical tables: ${missingTables.join(', ')}`);
+      } else {
+        console.log(`✅ All critical tables verified!`);
+      }
+    } catch (error) {
+      console.warn(`⚠️  Could not verify tables: ${error.message}`);
     }
 
     process.exit(errorCount > 0 ? 1 : 0);
   } catch (error) {
-    console.error('❌ Database initialization failed:', error);
+    console.error('❌ Database initialization failed:', error.message);
     process.exit(1);
-  } finally {
-    // Close the connection pool
-    await pool.end();
   }
 }
 

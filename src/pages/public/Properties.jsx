@@ -175,43 +175,10 @@ function Properties() {
             </div>
           </div>
 
-          {/* Results info and controls */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <p className="text-sm text-text-secondary">
-              ({pagination.total || 0} Properties Found)
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <button className="px-3 py-1 border border-midnight-700 rounded-btn text-sm text-text-nav hover:bg-midnight-800 transition">
-                  All
-                </button>
-                <button className="px-3 py-1 bg-gold text-midnight-950 rounded-btn text-sm hover:bg-gold-hover transition">
-                  Curated
-                </button>
-              </div>
-              <button
-                onClick={() => setFilters({ city: '', property_type: '', budget: '' })}
-                className="text-sm text-gold hover:text-gold-hover font-medium transition"
-              >
-                Clear Filters
-              </button>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-text-nav font-medium">Sort By</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    setSortBy(e.target.value);
-                    setPage(1);
-                  }}
-                  className="px-3 py-2 bg-midnight-800 border border-midnight-700 rounded-input text-sm focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition text-text-primary"
-                >
-                  <option value="auction_date" className="bg-midnight-800 text-text-primary">Auctions Closing Soon</option>
-                  <option value="reserve_price" className="bg-midnight-800 text-text-primary">Price: Low to High</option>
-                  <option value="reserve_price_desc" className="bg-midnight-800 text-text-primary">Price: High to Low</option>
-                </select>
-              </div>
-            </div>
-          </div>
+          {/* Results info */}
+          <p className="text-sm text-text-secondary mb-8">
+            ({pagination.total || 0} Properties Found)
+          </p>
         </div>
 
         {/* Loading State */}

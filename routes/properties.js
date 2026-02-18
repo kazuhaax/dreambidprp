@@ -12,6 +12,16 @@ const updateAuctionStatus = async () => {
   // Only mark as expired if auction date has passed
   // Keep 'upcoming' status until auction date arrives
   try {
+    // Check if properties table exists first
+    const tableExists = await pool.query(
+      "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'properties')"
+    );
+
+    if (!tableExists.rows[0].exists) {
+      console.log('⚠️  properties table does not exist yet, skipping auction status update');
+      return;
+    }
+
     await pool.query(
       `UPDATE properties 
        SET auction_status = CASE 
@@ -30,8 +40,9 @@ const updateAuctionStatus = async () => {
 };
 
 // Run status update on server start and periodically
+// Delay initial run by 5 seconds to allow database initialization
+setTimeout(updateAuctionStatus, 5000);
 setInterval(updateAuctionStatus, 60000); // Every minute
-updateAuctionStatus();
 
 // @route   GET /api/properties
 // @desc    Get all properties (with filters)

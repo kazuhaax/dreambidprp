@@ -20,6 +20,15 @@ class User {
     return result.rows[0];
   }
 
+  // Find user by id including password hash (for password verification only)
+  static async findByIdWithPassword(id) {
+    const result = await pool.query(
+      'SELECT id, email, full_name, phone, profile_photo, role, is_active, password_hash, created_at FROM users WHERE id = $1',
+      [id]
+    );
+    return result.rows[0];
+  }
+
   // Create a new user with bcrypt hashed password
   static async create(email, password, fullName, phone = null, role = 'user') {
     try {

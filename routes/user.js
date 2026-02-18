@@ -8,6 +8,9 @@ const router = express.Router();
 // All user routes require authentication
 router.use(authenticate);
 
+// Admin routes (must come before /:userId to avoid route conflicts)
+router.get('/all', UserController.getAllUsers);
+
 // Get current user info
 router.get('/me', UserController.getMe);
 
@@ -28,5 +31,10 @@ router.get('/activity', UserController.getUserActivity);
 
 // Get activity statistics
 router.get('/activity/stats', UserController.getActivityStats);
+
+// Specific user routes (must come last to avoid catching other routes)
+router.get('/:userId', UserController.getUserDetails);
+router.put('/:userId/status', UserController.updateUserStatus);
+router.put('/:userId/role', UserController.updateUserRole);
 
 export default router;

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useShortlist } from '../contexts/ShortlistContext';
 import ProfileDropdown from './ProfileDropdown';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const { getShortlistedCount } = useShortlist();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -68,10 +70,38 @@ function Navbar() {
             
             {isAuthenticated && user ? (
               <div className="flex items-center gap-4">
+                <Link 
+                  to="/shortlisted"
+                  className="relative text-text-nav hover:text-gold transition-colors p-2 rounded-lg hover:bg-midnight-800"
+                  title="Shortlisted Properties"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  {getShortlistedCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {getShortlistedCount()}
+                    </span>
+                  )}
+                </Link>
                 <ProfileDropdown user={user} />
               </div>
             ) : (
               <div className="flex items-center gap-3">
+                <Link 
+                  to="/shortlisted"
+                  className="relative text-text-nav hover:text-gold transition-colors p-2 rounded-lg hover:bg-midnight-800"
+                  title="Shortlisted Properties"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  {getShortlistedCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {getShortlistedCount()}
+                    </span>
+                  )}
+                </Link>
                 <Link to="/login" className="text-text-nav hover:text-gold px-4 py-2 rounded-lg transition-colors font-medium text-sm">
                   Sign In
                 </Link>
@@ -138,26 +168,30 @@ function Navbar() {
               {isAuthenticated && user ? (
                 <>
                   <Link
-                    to="/dashboard"
+                    to={user?.role === 'admin' || user?.role === 'staff' ? '/admin/dashboard' : '/dashboard'}
                     onClick={() => setMenuOpen(false)}
                     className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
                   >
                     Dashboard
                   </Link>
-                  <Link
-                    to="/profile"
-                    onClick={() => setMenuOpen(false)}
-                    className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    to="/settings"
-                    onClick={() => setMenuOpen(false)}
-                    className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
-                  >
-                    Settings
-                  </Link>
+                  {(user?.role !== 'admin' && user?.role !== 'staff') && (
+                    <>
+                      <Link
+                        to="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => setMenuOpen(false)}
+                        className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors"
+                      >
+                        Settings
+                      </Link>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
@@ -178,7 +212,7 @@ function Navbar() {
                 </>
               )}
               <Link
-                to="/admin/login"
+                to="/login"
                 onClick={() => setMenuOpen(false)}
                 className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-4 py-3 rounded-btn text-base font-medium transition-colors text-center"
               >

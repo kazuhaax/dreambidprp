@@ -110,21 +110,21 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-midnight-950">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-midnight-900 border-b border-midnight-700">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900">Edit Profile</h1>
-          <p className="mt-2 text-gray-600">Update your personal information</p>
+          <h1 className="text-3xl font-bold text-text-primary">Edit Profile</h1>
+          <p className="mt-2 text-text-secondary">Update your personal information</p>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow p-8">
+        <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-8">
           {/* Profile Photo Section */}
-          <div className="mb-8 pb-8 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h2>
+          <div className="mb-8 pb-8 border-b border-midnight-700">
+            <h2 className="text-lg font-semibold text-text-primary mb-4">Profile Photo</h2>
             
             <div className="flex items-center space-x-6">
               {/* Current Photo */}
@@ -133,11 +133,11 @@ function Profile() {
                   <img
                     src={previewUrl}
                     alt={user?.full_name}
-                    className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-midnight-700"
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-24 h-24 rounded-full bg-midnight-800 flex items-center justify-center border-2 border-midnight-700">
+                    <svg className="w-12 h-12 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
@@ -158,7 +158,7 @@ function Profile() {
                     <button
                       type="button"
                       onClick={() => document.getElementById('photo').click()}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      className="inline-flex items-center px-4 py-2 border border-midnight-600 rounded-lg shadow-sm text-sm font-medium text-text-primary bg-midnight-800 hover:bg-midnight-700"
                     >
                       Change Photo
                     </button>
@@ -168,7 +168,7 @@ function Profile() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-midnight-950 bg-gold hover:bg-gold-hover disabled:bg-midnight-600"
                     >
                       {loading ? 'Uploading...' : 'Upload'}
                     </button>
@@ -179,7 +179,7 @@ function Profile() {
                       type="button"
                       onClick={handleDeletePhoto}
                       disabled={loading}
-                      className="block text-red-600 hover:text-red-700 text-sm font-medium"
+                      className="block text-red-400 hover:text-red-300 text-sm font-medium"
                     >
                       Delete Photo
                     </button>
@@ -191,10 +191,10 @@ function Profile() {
 
           {/* Profile Information Form */}
           <form onSubmit={handleUpdateProfile} className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
+            <h2 className="text-lg font-semibold text-text-primary">Personal Information</h2>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1">
                 Email Address (Read-only)
               </label>
               <input
@@ -202,12 +202,12 @@ function Profile() {
                 id="email"
                 value={user?.email || ''}
                 disabled
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
+                className="w-full px-4 py-2 border border-midnight-700 rounded-lg bg-midnight-800 text-text-muted cursor-not-allowed"
               />
             </div>
 
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="full_name" className="block text-sm font-medium text-text-primary mb-1">
                 Full Name
               </label>
               <input
@@ -216,12 +216,12 @@ function Profile() {
                 name="full_name"
                 value={formData.full_name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-midnight-700 rounded-lg bg-midnight-800 text-text-primary focus:outline-none focus:ring-2 focus:ring-gold placeholder-text-muted"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="phone" className="block text-sm font-medium text-text-primary mb-1">
                 Phone Number
               </label>
               <input
@@ -231,21 +231,21 @@ function Profile() {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-midnight-700 rounded-lg bg-midnight-800 text-text-primary focus:outline-none focus:ring-2 focus:ring-gold placeholder-text-muted"
               />
             </div>
 
             <div className="flex justify-end space-x-3">
               <a
                 href="/dashboard"
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-midnight-600 rounded-lg text-text-primary hover:bg-midnight-800"
               >
                 Cancel
               </a>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+                className="px-4 py-2 bg-gold text-midnight-950 rounded-lg hover:bg-gold-hover disabled:bg-midnight-600 font-semibold"
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>

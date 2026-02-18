@@ -99,25 +99,25 @@ function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-midnight-950">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-midnight-900 border-b border-midnight-700">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="mt-2 text-gray-600">Manage your account settings and preferences</p>
+          <h1 className="text-3xl font-bold text-text-primary">Settings</h1>
+          <p className="mt-2 text-text-secondary">Manage your account settings and preferences</p>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Change Password Section */}
-        <div className="bg-white rounded-lg shadow p-8 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Change Password</h2>
+        <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-8 mb-8">
+          <h2 className="text-lg font-semibold text-text-primary mb-6">Change Password</h2>
 
           <form onSubmit={handleSubmitPasswordChange} className="space-y-5">
             {/* Current Password */}
             <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-text-primary mb-1">
                 Current Password
               </label>
               <div className="relative">
@@ -127,14 +127,14 @@ function Settings() {
                   name="currentPassword"
                   value={passwordForm.currentPassword}
                   onChange={handlePasswordChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.currentPassword ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold bg-midnight-800 text-text-primary placeholder-text-muted ${
+                    errors.currentPassword ? 'border-red-500' : 'border-midnight-700'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-800"
+                  className="absolute right-3 top-2.5 text-text-secondary hover:text-text-primary"
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

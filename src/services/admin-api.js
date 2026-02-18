@@ -62,6 +62,14 @@ export const enquiriesAPI = {
   updateStatus: (id, status) => api.put(`/enquiries/${id}/status`, { status }),
 };
 
+// Users API
+export const usersAPI = {
+  getAll: (params) => api.get('/user/all', { params }),
+  getById: (id) => api.get(`/user/${id}`),
+  updateStatus: (id, is_active) => api.put(`/user/${id}/status`, { is_active }),
+  updateRole: (id, role) => api.put(`/user/${id}/role`, { role }),
+};
+
 // Interests API
 export const interestsAPI = {
   track: (data) => api.post('/interests', data),

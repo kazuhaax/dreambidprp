@@ -48,7 +48,9 @@ function Home() {
   const { toggleShortlist, isShortlisted } = useShortlist();
   const scrollContainerRef = useRef(null);
   const morePropertiesRef = useRef(null);
+  const citiesCarouselRef = useRef(null);
   const [carouselScroll, setCarouselScroll] = useState(0);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
   
   // Budget range mapping
   const budgetRanges = {
@@ -121,6 +123,45 @@ function Home() {
   );
 
   const properties = featuredData?.data?.properties || [];
+
+  // Define cities data
+  const citiesData = [
+    { name: 'Delhi', city: 'Delhi', image: 'https://images.unsplash.com/photo-1569163139394-de4798aa62b1?w=300&h=300&fit=crop' },
+    { name: 'Haryana', city: 'Haryana', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=300&fit=crop' },
+    { name: 'Noida', city: 'Noida', image: 'https://images.unsplash.com/photo-1518591413033-2461a8812633?w=300&h=300&fit=crop' },
+    { name: 'Gurugram', city: 'Gurugram', image: 'https://images.unsplash.com/photo-1585337981519-0f0f2c3a2e9d?w=300&h=300&fit=crop' },
+    { name: 'Ludhiana', city: 'Ludhiana', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=300&fit=crop' },
+    { name: 'Chandigarh', city: 'Chandigarh', image: 'https://images.unsplash.com/photo-1566156542119-a2f1c6c4a8e1?w=300&h=300&fit=crop' },
+    { name: 'Himachal Pradesh', city: 'Himachal Pradesh', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop' },
+    { name: 'Rajasthan', city: 'Rajasthan', image: 'https://images.unsplash.com/photo-1567359781514-3b963ff5b2b5?w=300&h=300&fit=crop' },
+    { name: 'Amritsar', city: 'Amritsar', image: 'https://images.unsplash.com/photo-1542401886-65d27afda266?w=300&h=300&fit=crop' },
+  ];
+  // Duplicate cities array for seamless infinite loop
+  const doubledCities = [...citiesData, ...citiesData];
+
+  // Auto-scroll cities carousel
+  useEffect(() => {
+    if (!autoScrollEnabled) return;
+
+    const container = citiesCarouselRef.current;
+    if (!container) return;
+
+    const interval = setInterval(() => {
+      // Smooth continuous scroll
+      const scrollAmount = 280; // width of card + gap
+      const currentScroll = container.scrollLeft;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      
+      if (currentScroll >= maxScroll - 10) {
+        // Reset to beginning for seamless loop
+        container.scrollLeft = 0;
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }, 3500); // Scroll every 3.5 seconds
+
+    return () => clearInterval(interval);
+  }, [autoScrollEnabled]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -224,6 +265,103 @@ function Home() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Discover Properties in Top Cities Section */}
+      <div className="bg-gradient-to-b from-midnight-950 to-midnight-900 px-4 md:px-8 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12 md:mb-16">
+            <p className="text-xs md:text-sm font-semibold text-gold uppercase tracking-widest mb-3">POPULAR CITIES</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-4">
+              Discover Properties in <span className="text-gold">Top Cities</span>
+            </h2>
+            <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+              Explore a diverse range of properties in prime cities, offered by leading banks and financial institutions. Ideal for buying, investing, or flipping.
+            </p>
+          </div>
+
+          {/* Cities Carousel */}
+          <div 
+            className="relative group"
+            onMouseEnter={() => setAutoScrollEnabled(false)}
+            onMouseLeave={() => setAutoScrollEnabled(true)}
+          >
+            {/* Left Arrow */}
+            <button
+              onClick={() => {
+                const container = document.getElementById('citiesCarousel');
+                if (container) {
+                  container.scrollBy({ left: -280, behavior: 'smooth' });
+                }
+              }}
+              className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-20 bg-gold text-midnight-950 rounded-full p-2 md:p-3 hover:bg-gold-hover transition-all shadow-lg hover:shadow-xl opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Scroll left"
+            >
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={() => {
+                const container = document.getElementById('citiesCarousel');
+                if (container) {
+                  container.scrollBy({ left: 280, behavior: 'smooth' });
+                }
+              }}
+              className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-20 bg-gold text-midnight-950 rounded-full p-2 md:p-3 hover:bg-gold-hover transition-all shadow-lg hover:shadow-xl opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Scroll right"
+            >
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Cities Container */}
+            <div 
+              id="citiesCarouselWrapper"
+              className="relative"
+            >
+              <div 
+                id="citiesCarousel"
+                ref={citiesCarouselRef}
+                className="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth hide-scrollbar px-4"
+              >
+              {/* City Cards */}
+              {doubledCities.map((city, index) => (
+                <Link
+                  key={index}
+                  to="/properties"
+                  state={{ filters: { city: city.city } }}
+                  className="flex-shrink-0 w-32 md:w-40 text-center group cursor-pointer"
+                >
+                  <div className="relative h-32 md:h-40 rounded-lg overflow-hidden mb-3 md:mb-4 shadow-lg hover:shadow-2xl transition-all transform group-hover:scale-110">
+                    <img
+                      src={city.image}
+                      alt={city.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect fill="%231F2A3D" width="300" height="300"/%3E%3Ctext fill="%23CBA135" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="20"%3E' + city.name + '%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-midnight-950 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                      <span className="text-gold font-semibold text-sm">Explore</span>
+                    </div>
+                  </div>
+                  <h3 className="text-sm md:text-base font-bold text-white group-hover:text-gold transition-colors">{city.name}</h3>
+                  <p className="text-xs text-text-secondary">{city.city}</p>
+                </Link>
+              ))}
+              </div>
+            </div>
+
+            {/* Gradient Overlays */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-midnight-950 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-midnight-950 to-transparent z-10 pointer-events-none"></div>
           </div>
         </div>
       </div>
@@ -427,12 +565,12 @@ function Home() {
       </div>
 
       {/* Your Buying Process Section */}
-      <div id="buying-process" className="bg-white px-4 md:px-8 py-16 md:py-24 border-t border-gray-200">
+      <div id="buying-process" className="bg-gradient-to-b from-midnight-950 to-midnight-900 px-4 md:px-8 py-16 md:py-24 border-t border-midnight-700">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <p className="text-sm md:text-base font-semibold text-gold mb-2">HOW IT WORKS</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The <span className="text-blue-600">Buying Process</span></h2>
-            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">How to buy properties from banks? We're here to guide you through the process, making your property acquisition journey seamless and hassle-free.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">The <span className="text-gold">Buying Process</span></h2>
+            <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto">How to buy properties from banks? We're here to guide you through the process, making your property acquisition journey seamless and hassle-free.</p>
           </div>
 
           {/* Horizontal Carousel */}
@@ -444,21 +582,21 @@ function Home() {
               style={{ scrollBehavior: 'smooth' }}
             >
               {/* Step 1 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-6 border border-cyan-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 bg-cyan-400 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl font-bold text-gray-900">01</span>
+                  <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-midnight-950">01</span>
                   </div>
-                  <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Choose a Property</h3>
-                <p className="text-gray-700 text-sm">Explore our listings & find a property that meets your requirements.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Choose a Property</h3>
+                <p className="text-text-secondary text-sm">Explore our listings & find a property that meets your requirements.</p>
               </div>
 
               {/* Step 2 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-6 border border-cyan-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">02</span>
@@ -467,12 +605,12 @@ function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Pay EMD</h3>
-                <p className="text-gray-700 text-sm">Pay 10% earnest money deposit as an assurance of interest in the property.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Pay EMD</h3>
+                <p className="text-text-secondary text-sm">Pay 10% earnest money deposit as an assurance of interest in the property.</p>
               </div>
 
               {/* Step 3 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">03</span>
@@ -481,12 +619,12 @@ function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Submit Application</h3>
-                <p className="text-gray-700 text-sm">Submit the Common Application Form (CAF) and prepare for auction.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Submit Application</h3>
+                <p className="text-text-secondary text-sm">Submit the Common Application Form (CAF) and prepare for auction.</p>
               </div>
 
               {/* Step 4 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">04</span>
@@ -495,12 +633,12 @@ function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zM5 20a6 6 0 0110-12 6 6 0 0110 12H5z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Participate in Auction</h3>
-                <p className="text-gray-700 text-sm">Register with the auction portal and take part in the bidding process.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Participate in Auction</h3>
+                <p className="text-text-secondary text-sm">Register with the auction portal and take part in the bidding process.</p>
               </div>
 
               {/* Step 5 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">05</span>
@@ -509,40 +647,40 @@ function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Auction Outcome</h3>
-                <p className="text-gray-700 text-sm">If you win, pay 15%. If you lose, get the EMD refund.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Auction Outcome</h3>
+                <p className="text-text-secondary text-sm">If you win, pay 15%. If you lose, get the EMD refund.</p>
               </div>
 
               {/* Step 6 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-6 border border-yellow-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl font-bold text-gray-900">06</span>
+                  <div className="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl font-bold text-midnight-950">06</span>
                   </div>
                   <svg className="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Pay 75% in 15 Days</h3>
-                <p className="text-gray-700 text-sm">Pay the remaining 75% within 15 Days to start the registration process.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Pay 75% in 15 Days</h3>
+                <p className="text-text-secondary text-sm">Pay the remaining 75% within 15 Days to start the registration process.</p>
               </div>
 
               {/* Step 7 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-orange-400 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">07</span>
                   </div>
-                  <svg className="w-6 h-6 text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Obtain Sale Certificate</h3>
-                <p className="text-gray-700 text-sm">The seller institution issues the sale certificate after payment completion.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Obtain Sale Certificate</h3>
+                <p className="text-text-secondary text-sm">The seller institution issues the sale certificate after payment completion.</p>
               </div>
 
               {/* Step 8 */}
-              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 border border-red-200">
+              <div className="flex-shrink-0 w-full md:w-1/4 bg-gradient-to-br from-midnight-800 to-midnight-750 rounded-lg p-6 border border-midnight-700">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-white">08</span>
@@ -551,8 +689,8 @@ function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l4-4m0 0l4 4m-4-4V5" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Register the Property</h3>
-                <p className="text-gray-700 text-sm">Authorized officer registers the property in the Sub-Registrar Office.</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Register the Property</h3>
+                <p className="text-text-secondary text-sm">Authorized officer registers the property in the Sub-Registrar Office.</p>
               </div>
             </div>
 
@@ -564,9 +702,9 @@ function Home() {
                     scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
                   }
                 }}
-                className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-all"
+                className="w-12 h-12 rounded-full border-2 border-midnight-600 flex items-center justify-center hover:border-gold hover:bg-midnight-800 transition-all"
               >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -576,9 +714,9 @@ function Home() {
                     scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
                   }
                 }}
-                className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-all"
+                className="w-12 h-12 rounded-full border-2 border-midnight-600 flex items-center justify-center hover:border-gold hover:bg-midnight-800 transition-all"
               >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>

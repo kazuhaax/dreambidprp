@@ -17,7 +17,7 @@ function AdminNavbar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate('/login');
     closeMenu();
   };
 
@@ -44,6 +44,9 @@ function AdminNavbar() {
               </Link>
               <Link to="/admin/enquiries" className="text-text-nav hover:text-gold transition-colors">
                 Enquiries
+              </Link>
+              <Link to="/admin/users" className="text-text-nav hover:text-gold transition-colors">
+                Users
               </Link>
             </div>
           </div>
@@ -117,6 +120,13 @@ function AdminNavbar() {
               className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
             >
               Enquiries
+            </Link>
+            <Link
+              to="/admin/users"
+              onClick={closeMenu}
+              className="text-text-nav hover:text-gold hover:bg-midnight-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+            >
+              Users
             </Link>
             
             {/* Mobile User Info */}

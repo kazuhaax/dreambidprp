@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useMemo } from 'react';
 
 const ShortlistContext = createContext();
 
@@ -7,7 +7,24 @@ export function ShortlistProvider({ children }) {
     // Load from localStorage on initialization
     try {
       const saved = localStorage.getItem('dreambid_shortlist');
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      
+      const parsed = JSON.parse(saved);
+      const now = new Date().getTime();
+      
+      // Filter out expired auctions
+      const filtered = parsed.filter(item => {
+        if (!item.auction_date) return true; // Keep if no expiry date
+        const auctionDate = new Date(item.auction_date).getTime();
+        return auctionDate > now;
+      });
+      
+      // Update localStorage if any items were removed
+      if (filtered.length !== parsed.length) {
+        localStorage.setItem('dreambid_shortlist', JSON.stringify(filtered));
+      }
+      
+      return filtered;
     } catch {
       return [];
     }
@@ -18,35 +35,71 @@ export function ShortlistProvider({ children }) {
     localStorage.setItem('dreambid_shortlist', JSON.stringify(shortlistedProperties));
   }, [shortlistedProperties]);
 
-  const toggleShortlist = (propertyId) => {
+  // Get active shortlisted properties (non-expired)
+  const activeShortlistedProperties = useMemo(() => {
+    const now = new Date().getTime();
+    return shortlistedProperties.filter(item => {
+      if (!item.auction_date) return true;
+      const auctionDate = new Date(item.auction_date).getTime();
+      return auctionDate > now;
+    });
+  }, [shortlistedProperties]);
+
+  const toggleShortlist = (property) => {
     setShortlistedProperties(prev => {
-      if (prev.includes(propertyId)) {
-        return prev.filter(id => id !== propertyId);
+      const exists = prev.find(p => p.id === property.id);
+      if (exists) {
+        return prev.filter(p => p.id !== property.id);
       } else {
-        return [...prev, propertyId];
+        // Store property data along with auction_date for expiry checking
+        return [...prev, {
+          id: property.id,
+          title: property.title,
+          cover_image_url: property.cover_image_url,
+          reserve_price: property.reserve_price,
+          city: property.city,
+          state: property.state,
+          bedrooms: property.bedrooms,
+          area: property.area,
+          property_type: property.property_type,
+          auction_date: property.auction_date,
+          status: property.status,
+        }];
       }
     });
   };
 
   const isShortlisted = (propertyId) => {
-    return shortlistedProperties.includes(propertyId);
+    return shortlistedProperties.some(p => p.id === propertyId);
   };
 
   const getShortlistedCount = () => {
-    return shortlistedProperties.length;
+    return activeShortlistedProperties.length;
   };
 
   const clearShortlist = () => {
     setShortlistedProperties([]);
   };
 
+  const removeExpiredListings = () => {
+    const now = new Date().getTime();
+    setShortlistedProperties(prev => 
+      prev.filter(item => {
+        if (!item.auction_date) return true;
+        const auctionDate = new Date(item.auction_date).getTime();
+        return auctionDate > now;
+      })
+    );
+  };
+
   return (
     <ShortlistContext.Provider value={{
-      shortlistedProperties,
+      shortlistedProperties: activeShortlistedProperties,
       toggleShortlist,
       isShortlisted,
       getShortlistedCount,
       clearShortlist,
+      removeExpiredListings,
     }}>
       {children}
     </ShortlistContext.Provider>

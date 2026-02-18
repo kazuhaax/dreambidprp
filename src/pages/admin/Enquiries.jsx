@@ -79,45 +79,45 @@ function Enquiries() {
       </div>
 
       {/* Enquiries List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-midnight-900 border border-midnight-700 rounded-lg shadow overflow-hidden">
         {enquiries.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-text-muted">
             <p>No enquiries found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-midnight-700">
+              <thead className="bg-midnight-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Contact Info
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Property
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Message
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-midnight-900 divide-y divide-midnight-700">
                 {enquiries.map((enquiry) => (
-                  <tr key={enquiry.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{enquiry.name}</div>
-                      <div className="text-sm text-gray-500">{enquiry.email}</div>
+                  <tr key={enquiry.id} className="hover:bg-midnight-800 transition\">
+                    <td className="px-6 py-4 whitespace-nowrap\">
+                      <div className="text-sm font-medium text-text-primary\">{enquiry.name}</div>
+                      <div className="text-sm text-text-secondary\">{enquiry.email}</div>
                       <div className="text-sm text-gray-500">{enquiry.phone}</div>
                     </td>
                     <td className="px-6 py-4">

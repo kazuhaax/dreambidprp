@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import toast from 'react-hot-toast';
 
 function Dashboard() {
   const { user } = useAuth();
@@ -22,16 +21,14 @@ function Dashboard() {
         setLoading(true);
         
         // Fetch user activity
-        const [activityRes, statsRes] = await Promise.all([
-          api.get('/user/activity?limit=10'),
-          api.get('/user/activity/stats?daysBack=30')
-        ]);
-
+        const activityRes = await api.get('/user/activity?limit=10');
         setActivities(activityRes.data.activities || []);
-        setStats(activityRes.data || {});
+        setStats(activityRes.data.stats || []);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        toast.error('Failed to load dashboard data');
+        // Don't show error toast, just set empty data
+        setActivities([]);
+        setStats([]);
       } finally {
         setLoading(false);
       }
@@ -42,10 +39,10 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-midnight-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto"></div>
+          <p className="mt-4 text-text-secondary">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -83,16 +80,16 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-midnight-950">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-midnight-900 border-b border-midnight-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-text-primary">
                 Welcome back, {user?.full_name || 'User'}! 👋
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-text-secondary">
                 Here's what's happening with your account
               </p>
             </div>
@@ -104,24 +101,24 @@ function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Account Information */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
+          <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-text-primary mb-4">Account Information</h2>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="text-gray-900 font-medium">{user?.email}</p>
+                <p className="text-sm text-text-muted">Email</p>
+                <p className="text-text-primary font-medium">{user?.email}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Full Name</p>
-                <p className="text-gray-900 font-medium">{user?.full_name}</p>
+                <p className="text-sm text-text-muted">Full Name</p>
+                <p className="text-text-primary font-medium">{user?.full_name}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="text-gray-900 font-medium">{user?.phone || 'Not provided'}</p>
+                <p className="text-sm text-text-muted">Phone</p>
+                <p className="text-text-primary font-medium">{user?.phone || 'Not provided'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Member Since</p>
-                <p className="text-gray-900 font-medium">
+                <p className="text-sm text-text-muted">Member Since</p>
+                <p className="text-text-primary font-medium">
                   {new Date(user?.created_at).toLocaleDateString()}
                 </p>
               </div>
@@ -129,35 +126,35 @@ function Dashboard() {
           </div>
 
           {/* Activity Summary */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Activity Summary (30 days)</h2>
+          <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-text-primary mb-4">Activity Summary (30 days)</h2>
             <div className="space-y-3">
               {stats.length > 0 ? (
                 stats.map((stat, idx) => (
                   <div key={idx} className="flex justify-between">
-                    <span className="text-gray-600">{stat.action}</span>
-                    <span className="font-semibold text-gray-900">{stat.count}</span>
+                    <span className="text-text-secondary">{stat.action}</span>
+                    <span className="font-semibold text-text-primary">{stat.count}</span>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500">No activity in the last 30 days</p>
+                <p className="text-text-muted">No activity in the last 30 days</p>
               )}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-text-primary mb-4">Quick Actions</h2>
             <div className="space-y-2">
               <a
                 href="/profile"
-                className="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="block w-full text-center px-4 py-2 bg-gold text-midnight-950 rounded-lg hover:bg-gold-hover transition font-semibold"
               >
                 Edit Profile
               </a>
               <a
                 href="/settings"
-                className="block w-full text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                className="block w-full text-center px-4 py-2 border border-midnight-600 text-text-primary rounded-lg hover:bg-midnight-800 transition"
               >
                 Settings
               </a>
@@ -166,35 +163,35 @@ function Dashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+        <div className="bg-midnight-900 border border-midnight-700 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Activity</h2>
           
           {activities.length > 0 ? (
             <div className="space-y-4">
               {activities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-4 pb-4 border-b border-gray-200 last:border-0">
+                <div key={activity.id} className="flex items-start space-x-4 pb-4 border-b border-midnight-700 last:border-0">
                   <div className="flex-1">
-                    <p className="text-gray-900 font-medium">
+                    <p className="text-text-primary font-medium">
                       {getActionLabel(activity.action)}
                     </p>
                     {activity.data && (
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-text-secondary mt-1">
                         {JSON.stringify(activity.data).substring(0, 100)}...
                       </p>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 whitespace-nowrap">
+                  <p className="text-sm text-text-muted whitespace-nowrap">
                     {formatDate(activity.created_at)}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">No activity yet</p>
+            <p className="text-text-muted text-center py-8">No activity yet</p>
           )}
 
           <div className="mt-6 text-center">
-            <a href="/activity" className="text-blue-600 hover:text-blue-700 font-medium">
+            <a href="/activity" className="text-gold hover:text-gold-hover font-medium">
               View All Activity →
             </a>
           </div>

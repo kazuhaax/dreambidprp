@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from 'react-query';
 import { propertiesAPI, enquiriesAPI, interestsAPI } from '../../services/api';
 import { contactViaWhatsApp, shareProperty } from '../../utils/whatsapp';
 import { getImageUrl } from '../../utils/imageUrl';
+import { useShortlist } from '../../contexts/ShortlistContext';
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import toast from 'react-hot-toast';
 
@@ -80,6 +81,7 @@ const buyingProcessSteps = [
 
 function PropertyDetail() {
   const { id } = useParams();
+  const { toggleShortlist, isShortlisted } = useShortlist();
   const [enquiryForm, setEnquiryForm] = useState({
     name: '',
     email: '',
@@ -89,10 +91,12 @@ function PropertyDetail() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showInfoWindow, setShowInfoWindow] = useState(true);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showTimeline, setShowTimeline] = useState(true);
   const [kycFile, setKycFile] = useState(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isCarouselAutoScroll, setIsCarouselAutoScroll] = useState(true);
+  const carouselResumeTimeoutRef = useRef(null);
 
   const { data, isLoading, error } = useQuery(
     ['property', id],
@@ -120,6 +124,24 @@ function PropertyDetail() {
   );
 
   const property = data?.data?.property;
+
+  // Fetch similar properties from the same city
+  const { data: similarPropertiesData, isLoading: similarLoading } = useQuery(
+    ['similarProperties', property?.city],
+    () => {
+      if (!property?.city) return Promise.resolve({ data: { properties: [] } });
+      return propertiesAPI.getAll({ city: property.city, limit: 6 });
+    },
+    {
+      enabled: !!property?.city,
+    }
+  );
+
+  const similarProperties = useMemo(() => {
+    if (!similarPropertiesData?.data?.properties) return [];
+    // Filter out the current property from similar properties
+    return similarPropertiesData.data.properties.filter(p => p.id !== parseInt(id)).slice(0, 5);
+  }, [similarPropertiesData, id]);
 
   const center = useMemo(() => {
     if (property?.latitude && property?.longitude) {
@@ -174,21 +196,60 @@ function PropertyDetail() {
     }
   };
 
+  // Handle carousel interaction - pause auto-scroll and resume after 8 seconds
+  const handleCarouselInteraction = () => {
+    setIsCarouselAutoScroll(false);
+    
+    // Clear existing timeout if any
+    if (carouselResumeTimeoutRef.current) {
+      clearTimeout(carouselResumeTimeoutRef.current);
+    }
+    
+    // Set new timeout to resume auto-scroll after 8 seconds
+    carouselResumeTimeoutRef.current = setTimeout(() => {
+      setIsCarouselAutoScroll(true);
+    }, 8000);
+  };
+
+  // Auto-scroll effect for carousel
+  useEffect(() => {
+    if (!isCarouselAutoScroll) return;
+
+    const timer = setInterval(() => {
+      setCarouselIndex(prev => {
+        // Get the carousel images count from property data
+        let carouselImageCount = 0;
+        if (property?.cover_image_url) carouselImageCount++;
+        if (property?.images && property.images.length > 0) {
+          carouselImageCount += property.images.filter(img => {
+            const imgUrl = typeof img === 'object' ? img.image_url : img;
+            return imgUrl !== property?.cover_image_url;
+          }).length;
+        }
+        
+        if (carouselImageCount <= 1) return prev;
+        return (prev + 1) % carouselImageCount;
+      });
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [isCarouselAutoScroll, property?.cover_image_url, property?.images]);
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F7F9FC] flex items-center justify-center">
-        <div className="text-gray-600">Loading property details...</div>
+      <div className="min-h-screen bg-midnight-950 flex items-center justify-center">
+        <div className="text-text-secondary">Loading property details...</div>
       </div>
     );
   }
 
   if (error || !property) {
     return (
-      <div className="min-h-screen bg-[#F7F9FC] py-12">
+      <div className="min-h-screen bg-midnight-950 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white border border-red-200 rounded-xl shadow-sm p-6">
-            <p className="text-red-800">Property not found or error loading property.</p>
-            <Link to="/properties" className="text-red-600 hover:text-red-700 mt-4 inline-block font-medium">
+          <div className="bg-midnight-900 border border-red-900 rounded-xl shadow-sm p-6">
+            <p className="text-red-400">Property not found or error loading property.</p>
+            <Link to="/properties" className="text-red-400 hover:text-red-300 mt-4 inline-block font-medium">
               ← Back to Properties
             </Link>
           </div>
@@ -198,7 +259,7 @@ function PropertyDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F9FC]">
+    <div className="min-h-screen bg-midnight-950">
       {/* Image Modal */}
       {showImageModal && ((property.images && property.images.length > 0) || property.cover_image_url) && (() => {
         const allImages = [];
@@ -280,18 +341,22 @@ function PropertyDetail() {
           {/* Left Column - Property Content (70%) */}
           <div className="flex-1 space-y-8">
             {/* Property Header */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 lg:p-8">
+            <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6 lg:p-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 bg-[#F7F9FC] text-[#6B7280] text-sm font-medium rounded-lg">
+                  <span className="px-3 py-1 bg-midnight-800 text-text-secondary text-sm font-medium rounded-lg">
                     Property ID: {property.id}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setIsWishlisted(!isWishlisted)}
+                      onClick={() => {
+                        toggleShortlist(property);
+                        toast.success(isShortlisted(property.id) ? 'Removed from shortlist' : 'Added to shortlist');
+                      }}
                       className="p-2 rounded-lg hover:bg-[#F7F9FC] transition-colors"
+                      title={isShortlisted(property.id) ? 'Remove from shortlist' : 'Add to shortlist'}
                     >
-                      <svg className={`w-5 h-5 ${isWishlisted ? 'text-red-500 fill-current' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-5 h-5 ${isShortlisted(property.id) ? 'text-red-500 fill-current' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                     </button>
@@ -307,14 +372,14 @@ function PropertyDetail() {
                 </div>
               </div>
               
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
+              <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-6">
                 {property.title}
               </h1>
               
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-500">Reserve Price:</span>
-                  <span className="text-2xl lg:text-3xl font-bold text-gray-900">
+                  <span className="text-sm text-text-secondary">Reserve Price:</span>
+                  <span className="text-2xl lg:text-3xl font-bold text-text-primary">
                     ₹{property.reserve_price ? property.reserve_price.toLocaleString() : 'N/A'}
                   </span>
                 </div>
@@ -331,13 +396,13 @@ function PropertyDetail() {
             {/* Property Details & Auction Details */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Property Details Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Details</h3>
+              <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Property Details</h3>
                 <div className="space-y-3">
                   {property.property_type && (
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Property Type</span>
-                      <span className="text-sm font-medium text-gray-900">{property.property_type}</span>
+                      <span className="text-sm text-text-secondary">Property Type</span>
+                      <span className="text-sm font-medium text-text-primary">{property.property_type}</span>
                     </div>
                   )}
                   {property.area && (
@@ -374,13 +439,13 @@ function PropertyDetail() {
               </div>
 
               {/* Auction Details Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Auction Details</h3>
+              <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Auction Details</h3>
                 <div className="space-y-3">
                   {property.auction_date && (
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Auction Date</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm text-text-muted">Auction Date</span>
+                      <span className="text-sm font-medium text-text-primary">
                         {new Date(property.auction_date).toLocaleDateString()}
                       </span>
                     </div>
@@ -411,7 +476,7 @@ function PropertyDetail() {
               </div>
             </div>
 
-            {/* Image Gallery - Carousel Style */}
+            {/* Auto-Scrolling Carousel Section */}
             {((property.images && property.images.length > 0) || property.cover_image_url) && (() => {
               const allImages = [];
               if (property.cover_image_url) {
@@ -428,135 +493,106 @@ function PropertyDetail() {
 
               if (allImages.length === 0) return null;
 
-              const mainImage = allImages[selectedImageIndex] || allImages[0];
-
               return (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  {/* Main Image with Counter */}
-                  <div className="relative bg-gray-900 aspect-video">
-                    <img
-                      src={getImageUrl(mainImage)}
-                      alt={property.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23333" width="400" height="300"/%3E%3Ctext fill="%23666" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
-                      }}
-                    />
-                    
-                    {/* Navigation Arrows */}
+                <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-text-primary mb-4">Property Gallery</h3>
+                  <div className="relative">
+                    {/* Main Carousel Display */}
+                    <div className="relative bg-gray-900 rounded-xl overflow-hidden aspect-video">
+                      <img
+                        src={getImageUrl(allImages[carouselIndex])}
+                        alt={`Property ${carouselIndex + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23333" width="400" height="300"/%3E%3Ctext fill="%23666" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
+                        }}
+                      />
+                      
+                      {/* Navigation Arrows */}
+                      {allImages.length > 1 && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setCarouselIndex(prev => prev > 0 ? prev - 1 : allImages.length - 1);
+                              handleCarouselInteraction();
+                            }}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
+                          >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCarouselIndex(prev => prev < allImages.length - 1 ? prev + 1 : 0);
+                              handleCarouselInteraction();
+                            }}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
+                          >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                      
+                      {/* Image Counter */}
+                      {allImages.length > 1 && (
+                        <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          {carouselIndex + 1} / {allImages.length}
+                        </div>
+                      )}
+
+                      {/* Auto-scroll Indicator */}
+                      {allImages.length > 1 && (
+                        <div className="absolute bottom-4 left-4 text-white text-xs bg-black/70 px-3 py-1 rounded-full">
+                          {isCarouselAutoScroll ? '🔄 Auto-scrolling' : 'Manual mode'}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Thumbnail Strip */}
                     {allImages.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setSelectedImageIndex((prev) => (prev > 0 ? prev - 1 : allImages.length - 1))}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => setSelectedImageIndex((prev) => (prev < allImages.length - 1 ? prev + 1 : 0))}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </>
-                    )}
-                    
-                    {/* Image Counter */}
-                    {allImages.length > 1 && (
-                      <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        {selectedImageIndex + 1} / {allImages.length}
+                      <div className="mt-4 overflow-x-auto scrollbar-hide">
+                        <div className="flex gap-2 min-w-max pb-2">
+                          {allImages.map((img, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setCarouselIndex(index);
+                                handleCarouselInteraction();
+                              }}
+                              className={`flex-shrink-0 h-16 w-20 rounded-lg overflow-hidden border-2 transition-all ${
+                                carouselIndex === index
+                                  ? 'border-[#dc2626] ring-2 ring-[#dc2626]'
+                                  : 'border-gray-300 hover:border-gray-400'
+                              }`}
+                            >
+                              <img
+                                src={getImageUrl(img)}
+                                alt={`Thumbnail ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E';
+                                }}
+                              />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {/* Thumbnail Gallery */}
-                  {allImages.length > 1 && (
-                    <div className="p-4 bg-white">
-                      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                        {allImages.map((img, index) => (
-                          <div
-                            key={index}
-                            onClick={() => setSelectedImageIndex(index)}
-                            className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                              selectedImageIndex === index 
-                                ? 'border-[#dc2626] ring-2 ring-[#dc2626]' 
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                          >
-                            <img
-                              src={getImageUrl(img)}
-                              alt={`Thumbnail ${index + 1}`}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E';
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })()}
-
-            {/* Old Grid Gallery Fallback */}
-            {!((property.images && property.images.length > 0) || property.cover_image_url) && (
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Images</h3>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  {property.cover_image_url && (
-                    <div
-                      className="aspect-video rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => {
-                        setSelectedImageIndex(0);
-                        setShowImageModal(true);
-                      }}
-                    >
-                      <img
-                        src={getImageUrl(property.cover_image_url)}
-                        alt="Cover"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  {property.images && property.images.map((img, index) => {
-                    const imgUrl = typeof img === 'object' ? img.image_url : img;
-                    const actualIndex = property.cover_image_url ? index + 1 : index;
-                    return (
-                      <div
-                        key={index}
-                        className="aspect-video rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => {
-                          setSelectedImageIndex(actualIndex);
-                          setShowImageModal(true);
-                        }}
-                      >
-                        <img
-                          src={getImageUrl(imgUrl)}
-                          alt={`Property ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-
             {/* Map Section */}
             {center && (
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Location</h3>
+              <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Location</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">Street View</h4>
-                    <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-midnight-800">
                       <iframe
                         src={`https://maps.google.com/maps?q=${center.lat},${center.lng}&layer=c&cbll=${center.lat},${center.lng}&cbp=11,0,0,0,0`}
                         className="w-full h-full border-0"
@@ -599,12 +635,12 @@ function PropertyDetail() {
             )}
 
             {/* Information Section */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Property Information</h3>
+            <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-6">Property Information</h3>
               <div className="space-y-6">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Seller's Reserve Price</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Seller's Reserve Price</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     The reserve price is the minimum price the seller is willing to accept for the property. 
                     Bids below this price will not be considered. The reserve price is confidential and 
                     not disclosed to bidders.
@@ -612,8 +648,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Estimated Market Value</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Estimated Market Value</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     This is an approximate valuation of the property based on current market conditions, 
                     location, property features, and recent comparable sales in the area. This is for 
                     reference purposes only and may not reflect the final auction price.
@@ -621,8 +657,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Earnest Money Deposit (EMD)</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Earnest Money Deposit (EMD)</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     EMD is a security deposit that must be paid by interested bidders to participate in 
                     the auction. This amount is refundable to unsuccessful bidders and adjusted against 
                     the final payment for successful bidders.
@@ -630,8 +666,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Loan Availability</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Loan Availability</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     Financial institutions may provide loans for eligible properties. Subject to 
                     bank's terms, conditions, and approval processes. Buyers are advised to check 
                     loan eligibility before participating in the auction.
@@ -639,8 +675,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Request a Visit of the Property</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Request a Visit of the Property</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     Interested buyers can schedule a property visit by contacting our team. 
                     Site visits are subject to availability and must be scheduled in advance. 
                     Please bring valid identification for verification.
@@ -648,8 +684,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Possession Status</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Possession Status</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     The possession timeline varies depending on the property type and legal status. 
                     Typically, possession is handed over within 30-90 days after successful payment 
                     completion and legal formalities.
@@ -657,24 +693,24 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">CERSAI Report</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">CERSAI Report</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     Central Registry of Securitisation Asset Reconstruction and Security Interest of India 
                     report provides information about any existing securities or mortgages on the property.
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Encumbrance Certificate</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Encumbrance Certificate</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     This certificate confirms that the property is free from any legal or financial 
                     liabilities. It's a crucial document that verifies the clear title of the property.
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Payment Process for Repossessed Properties</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">Payment Process for Repossessed Properties</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     Payment must be completed within the specified timeframe after winning the bid. 
                     The process includes EMD adjustment, remaining payment, and documentation. 
                     Detailed payment instructions will be provided to successful bidders.
@@ -682,8 +718,8 @@ function PropertyDetail() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">SARFAESI Act</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <h4 className="font-medium text-text-primary mb-2">SARFAESI Act</h4>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     The Securitisation and Reconstruction of Financial Assets and Enforcement of 
                     Security Interest Act enables banks to recover their dues without intervention 
                     of the court, making the auction process more efficient.
@@ -691,7 +727,7 @@ function PropertyDetail() {
                 </div>
 
                 <div className="pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-muted">
                     <strong>Disclaimer:</strong> The information provided is for reference purposes only. 
                     Buyers are advised to conduct independent due diligence and verify all details before 
                     making any purchase decisions. The platform is not responsible for any inaccuracies 
@@ -700,6 +736,73 @@ function PropertyDetail() {
                 </div>
               </div>
             </div>
+
+            {/* More Properties Section */}
+            {!similarLoading && similarProperties.length > 0 && (
+              <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-text-primary">
+                    More Properties in {property?.city}
+                  </h3>
+                  <Link
+                    to={`/properties?city=${property?.city}`}
+                    className="text-sm text-[#dc2626] hover:text-[#b91c1c] font-medium transition"
+                  >
+                    View All →
+                  </Link>
+                </div>
+                <div className="overflow-x-auto lg:overflow-x-hidden scrollbar-hide">
+                  <div className="flex gap-4 min-w-max lg:min-w-0 lg:grid lg:grid-cols-3">
+                    {similarProperties.map((prop) => (
+                      <Link
+                        key={prop.id}
+                        to={`/property/${prop.id}`}
+                        className="group flex-shrink-0 lg:flex-shrink w-64 lg:w-full hover:shadow-lg transition-shadow rounded-xl overflow-hidden border border-midnight-700 hover:border-midnight-600 hover:bg-midnight-800"
+                      >
+                        <div className="flex flex-col h-full">
+                          {/* Property Image */}
+                          <div className="h-40 overflow-hidden bg-midnight-800">
+                            <img
+                              src={getImageUrl(prop.cover_image_url)}
+                              alt={prop.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23ddd" width="300" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
+                              }}
+                            />
+                          </div>
+
+                          {/* Property Details */}
+                          <div className="flex-1 p-4 flex flex-col">
+                            <h4 className="font-semibold text-text-primary text-sm line-clamp-2 group-hover:text-gold transition mb-2">
+                              {prop.title}
+                            </h4>
+                            <p className="text-xs text-text-muted mb-2">
+                              {prop.city}{prop.state ? `, ${prop.state}` : ''}
+                            </p>
+                            <div className="flex items-center gap-4 mt-auto text-xs mb-3">
+                              {prop.bedrooms && (
+                                <span className="text-text-secondary">
+                                  <span className="font-medium text-text-primary">{prop.bedrooms}</span> BHK
+                                </span>
+                              )}
+                              {prop.area_sqft && (
+                                <span className="text-text-secondary">
+                                  <span className="font-medium text-text-primary">{Math.round(prop.area_sqft)}</span> sq.ft.
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm font-bold text-text-primary">
+                              ₹{prop.reserve_price ? prop.reserve_price.toLocaleString() : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Sticky Sidebar (30%) */}
@@ -820,19 +923,19 @@ function PropertyDetail() {
             </div>
 
             {/* Contact Us Card */}
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm p-6 space-y-4">
-              <h3 className="text-lg font-bold text-gray-900">Contact Us</h3>
+            <div className="bg-gradient-to-br from-midnight-900 to-midnight-800 rounded-2xl shadow-sm p-6 space-y-4 border border-midnight-700">
+              <h3 className="text-lg font-bold text-text-primary">Contact Us</h3>
               
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-midnight-800 flex items-center justify-center border border-midnight-700">
+                    <svg className="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold">Phone</p>
-                    <a href="tel:+911140855500" className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition">
+                    <p className="text-xs text-text-muted uppercase font-semibold">Phone</p>
+                    <a href="tel:+911140855500" className="text-sm font-semibold text-text-primary hover:text-gold transition">
                       +91 1140 8555 00
                     </a>
                   </div>
@@ -850,15 +953,16 @@ function PropertyDetail() {
               </div>
 
               <div className="pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-600 text-center">
+                <p className="text-xs text-text-muted text-center">
                   Need more information? Our team is here to help you!
                 </p>
               </div>
             </div>
 
+           
             {/* Buying Process Timeline */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Your Buying Process</h3>
+            <div className="bg-midnight-900 border border-midnight-700 rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-6">Your Buying Process</h3>
               <div className="space-y-4">
                 {buyingProcessSteps.map((step, index) => (
                   <div key={step.number} className="flex items-start gap-4">
@@ -868,8 +972,8 @@ function PropertyDetail() {
                       {step.number}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 text-sm">{step.title}</h4>
-                      <p className="text-xs text-gray-500 mt-0.5">{step.description}</p>
+                      <h4 className="font-medium text-text-primary text-sm">{step.title}</h4>
+                      <p className="text-xs text-text-muted mt-0.5">{step.description}</p>
                     </div>
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
                       index < 2 ? 'bg-green-50' : 'bg-gray-50'
@@ -882,12 +986,13 @@ function PropertyDetail() {
                 ))}
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
       {/* Mobile Fixed Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-40">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-midnight-900 border-t border-midnight-700 p-4 shadow-lg z-40">
         <button
           onClick={() => {
             const formElement = document.querySelector('.bg-gray-900');

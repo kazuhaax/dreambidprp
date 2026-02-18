@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading, isAdmin } = useAuth();
+const UserProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -15,15 +15,17 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
+  // If not authenticated, redirect to login
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!isAdmin()) {
-    return <Navigate to="/" replace />;
+  // If user is admin or staff, redirect to admin dashboard
+  if (user?.role === 'admin' || user?.role === 'staff') {
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   return children;
 };
 
-export default ProtectedRoute;
+export default UserProtectedRoute;

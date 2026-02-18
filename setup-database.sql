@@ -115,8 +115,8 @@ CREATE INDEX idx_user_activity_created_at ON user_activity(created_at);
 CREATE INDEX idx_user_activity_action ON user_activity(action);
 CREATE INDEX idx_user_activity_user_date ON user_activity(user_id, created_at DESC);
 
--- Insert a sample admin user (password: admin123 - plain text for development)
--- Note: In production, create users through the API with bcrypt hashing
+-- Insert a sample admin user (password: admin123 - hashed with bcrypt)
+-- Note: Always use bcrypt hashing for passwords in production
 INSERT INTO users (email, password_hash, full_name, role, is_active)
-VALUES ('admin@dreambid.com', 'admin123', 'Admin User', 'admin', true)
+VALUES ('admin@dreambid.com', '$2a$10$.BuPpcfY36q7Uypbus.9/eCszDXNNj0nPgAn9qHVrITIkN9qX3H5a', 'Admin User', 'admin', true)
 ON CONFLICT (email) DO NOTHING;

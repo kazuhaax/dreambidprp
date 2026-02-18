@@ -94,45 +94,45 @@ function Properties() {
       </div>
 
       {/* Properties List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-midnight-900 border border-midnight-700 rounded-lg overflow-hidden">
         {properties.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-text-muted">
             <p>No properties found.</p>
-            <Link to="/admin/properties/new" className="text-red-600 hover:text-red-700 mt-2 inline-block">
+            <Link to="/admin/properties/new" className="text-gold hover:text-gold-hover mt-2 inline-block font-medium">
               Add your first property
             </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-midnight-700">
+              <thead className="bg-midnight-800 border-b border-midnight-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Property
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Location
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Reserve Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Auction Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Views
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-midnight-900 divide-y divide-midnight-700">
                 {properties.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-50">
+                  <tr key={property.id} className="hover:bg-midnight-800 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         {property.cover_image_url && (
@@ -143,19 +143,19 @@ function Properties() {
                           />
                         )}
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{property.title}</div>
-                          <div className="text-sm text-gray-500">{property.property_type}</div>
+                          <div className="text-sm font-medium text-text-primary">{property.title}</div>
+                          <div className="text-sm text-text-secondary">{property.property_type}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{property.city}</div>
-                      <div className="text-sm text-gray-500">{property.state}</div>
+                      <div className="text-sm text-text-primary">{property.city}</div>
+                      <div className="text-sm text-text-secondary">{property.state}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">
                       ₹{parseFloat(property.reserve_price).toLocaleString('en-IN')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">
                       {new Date(property.auction_date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -163,19 +163,19 @@ function Properties() {
                         {property.auction_status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                       {property.views_count || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => navigate(`/admin/properties/${property.id}/edit`)}
-                        className="text-red-600 hover:text-red-900 mr-4"
+                        className="text-gold hover:text-gold-hover mr-4 font-medium"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(property.id, property.title)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-400 hover:text-red-300 font-medium"
                       >
                         Delete
                       </button>

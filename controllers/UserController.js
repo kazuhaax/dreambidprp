@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import UserActivity from '../models/UserActivity.js';
+import pool from '../config/database.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -158,7 +159,12 @@ class UserController {
       }
 
       // Verify current password
-      const user = await User.findById(userId);
+      const user = await User.findByIdWithPassword(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
       const isPasswordValid = await User.verifyPassword(currentPassword, user.password_hash);
 
       if (!isPasswordValid) {
@@ -218,6 +224,139 @@ class UserController {
     } catch (error) {
       console.error('Error fetching activity stats:', error);
       res.status(500).json({ message: 'Failed to fetch activity stats' });
+    }
+  }
+
+  // Get all users (admin only)
+  static async getAllUsers(req, res) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const { limit = 50, offset = 0, search = '' } = req.query;
+
+      let query = `SELECT id, email, full_name, phone, role, is_active, created_at, updated_at 
+                   FROM users`;
+      const params = [];
+
+      if (search && search.trim()) {
+        query += ` WHERE (email ILIKE $1 OR full_name ILIKE $1 OR phone ILIKE $1)`;
+        params.push(`%${search}%`);
+      }
+
+      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(parseInt(limit), parseInt(offset));
+
+      const result = await pool.query(query, params);
+      const users = result.rows;
+
+      // Get total count
+      let countQuery = 'SELECT COUNT(*) as total FROM users';
+      const countParams = [];
+
+      if (search && search.trim()) {
+        countQuery += ` WHERE (email ILIKE $1 OR full_name ILIKE $1 OR phone ILIKE $1)`;
+        countParams.push(`%${search}%`);
+      }
+
+      const countResult = await pool.query(countQuery, countParams);
+      const total = parseInt(countResult.rows[0].total);
+
+      res.json({
+        data: users,
+        total,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      });
+    } catch (error) {
+      console.error('Error fetching all users:', error);
+      res.status(500).json({ message: 'Failed to fetch users' });
+    }
+  }
+
+  // Get user details by ID (admin only)
+  static async getUserDetails(req, res) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const { userId } = req.params;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get user activities
+      const activities = await UserActivity.getUserActivity(userId, 10, 0);
+      const activityStats = await UserActivity.getUserActivityStats(userId, 30);
+
+      res.json({
+        user,
+        activities,
+        stats: activityStats
+      });
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      res.status(500).json({ message: 'Failed to fetch user details' });
+    }
+  }
+
+  // Update user status (admin only)
+  static async updateUserStatus(req, res) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const { userId } = req.params;
+      const { is_active } = req.body;
+
+      if (is_active === undefined) {
+        return res.status(400).json({ message: 'is_active field is required' });
+      }
+
+      const updatedUser = await User.update(userId, { is_active });
+
+      res.json({
+        message: 'User status updated successfully',
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      res.status(500).json({ message: 'Failed to update user status' });
+    }
+  }
+
+  // Update user role (admin only)
+  static async updateUserRole(req, res) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      if (!role || !['user', 'admin'].includes(role)) {
+        return res.status(400).json({ message: 'Invalid role specified' });
+      }
+
+      const updatedUser = await User.update(userId, { role });
+
+      res.json({
+        message: 'User role updated successfully',
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      res.status(500).json({ message: 'Failed to update user role' });
     }
   }
 }

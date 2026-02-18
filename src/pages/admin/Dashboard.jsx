@@ -48,7 +48,7 @@ function Dashboard() {
   if (propertiesLoading || enquiriesLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600">Loading dashboard...</div>
+        <div className="text-text-secondary">Loading dashboard...</div>
       </div>
     );
   }
@@ -57,8 +57,8 @@ function Dashboard() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
+          <p className="text-sm text-text-muted mt-1">
             Last updated: {lastRefresh.toLocaleTimeString()}
           </p>
         </div>
@@ -84,45 +84,45 @@ function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Total Properties</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Total Properties</h3>
           <p className="text-3xl font-bold text-red-600 mt-2">{stats.totalProperties}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Active Auctions</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Active Auctions</h3>
           <p className="text-3xl font-bold text-green-600 mt-2">{stats.activeAuctions}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Upcoming Auctions</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Upcoming Auctions</h3>
           <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.upcomingAuctions}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">New Enquiries</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">New Enquiries</h3>
           <p className="text-3xl font-bold text-orange-600 mt-2">{stats.newEnquiries}</p>
         </div>
       </div>
 
       {/* Additional Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Total Views</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Total Views</h3>
           <p className="text-3xl font-bold text-purple-600 mt-2">{stats.totalViews}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Total Shares</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Total Shares</h3>
           <p className="text-3xl font-bold text-indigo-600 mt-2">{stats.totalShares}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-700">Total Enquiries</h3>
+        <div className="bg-midnight-900 border border-midnight-700 p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-text-primary">Total Enquiries</h3>
           <p className="text-3xl font-bold text-pink-600 mt-2">{stats.totalEnquiries}</p>
         </div>
       </div>
 
       {/* Recent Enquiries */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
+      <div className="bg-midnight-900 border border-midnight-700 rounded-lg">
+        <div className="p-6 border-b border-midnight-700">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-900">Recent Enquiries</h2>
+            <h2 className="text-xl font-bold text-text-primary">Recent Enquiries</h2>
             <Link
               to="/enquiries"
               className="text-red-600 hover:text-red-700 text-sm font-medium"
@@ -133,16 +133,16 @@ function Dashboard() {
         </div>
         <div className="p-6">
           {enquiries.slice(0, 5).length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No enquiries yet</p>
+            <p className="text-text-muted text-center py-4">No enquiries yet</p>
           ) : (
             <div className="space-y-4">
               {enquiries.slice(0, 5).map((enquiry) => (
-                <div key={enquiry.id} className="border-b border-gray-200 pb-4 last:border-0">
+                <div key={enquiry.id} className="border-b border-midnight-700 pb-4 last:border-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold text-gray-900">{enquiry.name}</p>
-                      <p className="text-sm text-gray-600">{enquiry.email} • {enquiry.phone}</p>
-                      <p className="text-sm text-gray-500 mt-1">{enquiry.property_title}</p>
+                      <p className="font-semibold text-text-primary">{enquiry.name}</p>
+                      <p className="text-sm text-text-secondary">{enquiry.email} • {enquiry.phone}</p>
+                      <p className="text-sm text-text-muted mt-1">{enquiry.property_title}</p>
                     </div>
                     <span className={`px-2 py-1 text-xs rounded ${
                       enquiry.status === 'new' ? 'bg-yellow-100 text-yellow-800' :

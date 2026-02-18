@@ -62,14 +62,16 @@ function Login() {
     setIsLoading(true);
 
     try {
+      const response = await login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      const userRole = response.user?.role;
+
       if (loginType === 'admin') {
         // Admin login
-        const response = await api.post('/auth/login', {
-          email: formData.email,
-          password: formData.password
-        });
-
-        if (response.data.user?.role !== 'admin' && response.data.user?.role !== 'staff') {
+        if (userRole !== 'admin' && userRole !== 'staff') {
           toast.error('This account does not have admin privileges');
           setErrors(prev => ({
             ...prev,
@@ -77,20 +79,22 @@ function Login() {
           }));
           return;
         }
-
-        // Store token and redirect to admin dashboard
-        localStorage.setItem('token', response.data.token);
-        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        
         toast.success('Admin logged in successfully!');
         navigate('/admin/dashboard');
       } else {
         // User login
-        await login({
-          email: formData.email,
-          password: formData.password
-        });
+        if (userRole === 'admin' || userRole === 'staff') {
+          toast.error('Please use Entity Login for admin accounts');
+          setErrors(prev => ({
+            ...prev,
+            email: 'Use Entity Login for admin'
+          }));
+          return;
+        }
+        
         toast.success('Logged in successfully!');
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';

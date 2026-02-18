@@ -111,7 +111,13 @@ function PropertyForm() {
   };
 
   const handleImageChange = (e) => {
-    setImages(Array.from(e.target.files));
+    const files = Array.from(e.target.files);
+    if (files.length > 20) {
+      toast.error('Maximum 20 images allowed');
+      setImages(files.slice(0, 20));
+    } else {
+      setImages(files);
+    }
   };
 
   const handlePdfChange = (e) => {
@@ -419,14 +425,19 @@ function PropertyForm() {
               </div>
             </div>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <p className="text-sm text-gray-500 mt-1">First image will be used as cover image</p>
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <div className="mt-2 flex justify-between text-sm">
+              <p className="text-gray-500">First image will be used as cover image</p>
+              <p className="text-gray-600 font-medium">Images selected: {images.length} / 20</p>
+            </div>
+          </div>
         </div>
 
         {/* PDF */}

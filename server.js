@@ -27,10 +27,11 @@ const PORT = process.env.PORT || 5000;
 
 // CORS Configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  'https://dreambid-new.netlify.app',
+  process.env.FRONTEND_URL || 'https://dreambid.netlify.app',
+  'https://dreambid.netlify.app',
   'http://localhost:3000',
   'http://localhost:5173',
+  'http://localhost:5174',
 ];
 
 const corsOptions = {
@@ -89,16 +90,18 @@ async function initializeDatabase() {
     } else {
       console.log('✅ Database tables already exist');
       
-      // Ensure admin user exists with correct password
+      // Ensure admin user exists with correct hashed password
       try {
+        // Bcrypt hash for password 'admin123'
+        const adminPasswordHash = '$2a$10$.BuPpcfY36q7Uypbus.9/eCszDXNNj0nPgAn9qHVrITIkN9qX3H5a';
         await pool.query(
           `INSERT INTO users (email, password_hash, full_name, role, is_active)
-           VALUES ('admin@dreambid.com', 'admin123', 'Admin User', 'admin', true)
-           ON CONFLICT (email) DO UPDATE SET password_hash = 'admin123'`
-        );
+           VALUES ('admin@dreambid.com', $1, 'Admin User', 'admin', true)
+           ON CONFLICT (email) DO UPDATE SET password_hash = $1`
+        , [adminPasswordHash]);
         console.log('✅ Admin user verified');
       } catch (err) {
-        console.log('ℹ️  Admin user setup skipped');
+        console.log('ℹ️  Admin user setup skipped:', err.message);
       }
     }
   } catch (error) {

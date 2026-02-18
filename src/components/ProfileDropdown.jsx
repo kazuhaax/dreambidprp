@@ -25,6 +25,11 @@ function ProfileDropdown({ user }) {
     navigate('/login');
   };
 
+  const getDashboardLink = () => {
+    // If user is admin or staff, link to admin dashboard
+    return (user?.role === 'admin' || user?.role === 'staff') ? '/admin/dashboard' : '/dashboard';
+  };
+
   const getInitials = (fullName) => {
     return fullName
       .split(' ')
@@ -66,7 +71,7 @@ function ProfileDropdown({ user }) {
 
           {/* Menu Items */}
           <Link
-            to="/dashboard"
+            to={getDashboardLink()}
             onClick={() => setIsOpen(false)}
             className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
           >

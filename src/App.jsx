@@ -20,16 +20,18 @@ import PublicLogin from './pages/public/Login';
 import UserDashboard from './pages/public/Dashboard';
 import UserProfile from './pages/public/Profile';
 import UserSettings from './pages/public/Settings';
+import Shortlisted from './pages/public/Shortlisted';
 
 // Admin Pages
-import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import AdminProperties from './pages/admin/AdminProperties';
 import PropertyForm from './pages/admin/PropertyForm';
 import Enquiries from './pages/admin/Enquiries';
+import Users from './pages/admin/Users';
 
-// Protected Route Component
+// Protected Route Components
 import ProtectedRoute from './components/ProtectedRoute';
+import UserProtectedRoute from './components/UserProtectedRoute';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -54,19 +56,17 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="properties" element={<Properties />} />
                 <Route path="properties/:id" element={<PropertyDetail />} />
+                <Route path="shortlisted" element={<Shortlisted />} />
                 <Route path="register" element={<Register />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="signup" element={<SignUp />} />
                 <Route path="login" element={<PublicLogin />} />
                 
                 {/* Protected User Routes */}
-                <Route path="dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-                <Route path="profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-                <Route path="settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
+                <Route path="dashboard" element={<UserProtectedRoute><UserDashboard /></UserProtectedRoute>} />
+                <Route path="profile" element={<UserProtectedRoute><UserProfile /></UserProtectedRoute>} />
+                <Route path="settings" element={<UserProtectedRoute><UserSettings /></UserProtectedRoute>} />
               </Route>
-
-              {/* Admin Login */}
-              <Route path="/admin/login" element={<AdminLogin />} />
 
               {/* Protected Admin Routes */}
               <Route
@@ -83,6 +83,7 @@ function App() {
                 <Route path="properties/new" element={<PropertyForm />} />
                 <Route path="properties/:id/edit" element={<PropertyForm />} />
                 <Route path="enquiries" element={<Enquiries />} />
+                <Route path="users" element={<Users />} />
               </Route>
 
               {/* Catch all route */}

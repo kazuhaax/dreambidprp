@@ -4,10 +4,14 @@
 
 [build.environment]
   NODE_VERSION = "18.18.0"
-  VITE_API_URL = "https://web-production-73cce.up.railway.app/api"
+  VITE_API_URL = "https://dreambid-api.up.railway.app/api"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[functions]
+  directory = "functions"
+  included_files = ["src/**/*.jsx", "src/**/*.js"]
 

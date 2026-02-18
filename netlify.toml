@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18.18.0"
-  VITE_API_URL = "https://dreambid-api.up.railway.app/api"
+  VITE_API_URL = "https://web-production-227cb.up.railway.app/api"
 
 [[redirects]]
   from = "/*"
